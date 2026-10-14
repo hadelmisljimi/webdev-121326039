@@ -9,9 +9,11 @@
 - Write clean and maintainable code.
 - Follow existing project structure.
 
-## The always-ask list
-- Asking before deleting code or data, modifying database schemas, or changing authentication logic.
+## Always ask before
+- Do not delete or overwrite files without asking.
+- Do not modify database schemas or authentication logic without explicit confirmation.
+- Do not change core project configurations without asking.
 
-## MCP server
+## The MCP server
 - The project includes an MCP server in `mcp-server/server.js`.
 - The agent will add tools; tell it they go through the service layer.
