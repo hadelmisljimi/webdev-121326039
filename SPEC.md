@@ -1,32 +1,40 @@
-# <Project name>
+# StudyGroupManager
 
 <!-- Exercise 2. Write the non-goals first. Every acceptance criterion must be checkable in under a minute.
      Keep these headings exactly as they are: the self-checks look for them by name.
      The full target is on the course site under Resources → The course project. -->
 
 ## Project option
-<!-- One line: lab booking, study groups, club events, or the own project the lecturer approved. -->
+study groups
 
 ## Goals
+- Allow university students to create, discover, and join study groups for specific course subjects.
+- Provide real-time chat and collaboration spaces for group members to coordinate meetings.
 
 ## Non-goals
+- We will not build a built-in video conferencing service; external links (Zoom/Meet) will be used instead.
+- We will not support automated grade tracking or official university LMS integrations.
+- We will not implement a native mobile app in this scope; the application will be web-responsive only.
 
 ## Constraints
+- Backend must be written in Node.js with secure session management.
+- All database queries must be protected against SQL injection using an ORM or parameterized queries.
+- Acceptance tests must run and pass within GitHub Actions CI.
 
 ## The model feature
 <!-- Which model, which modality, and what it does for a user.
      Name three things or the check fails: the input it receives, the output it produces,
      and what happens when the model is slow, rate-limited or wrong. -->
-- Model:
-- Input:
-- Output:
-- When it fails:
+- Model: gemini-1.5-flash
+- Input: Course syllabus text and user preferences (topic, availability, and skill level)
+- Output: Recommended study groups and personalized weekly study milestones
+- When it fails: Displays a friendly fallback message saying "AI recommendations are currently unavailable, please browse groups manually" and logs the error to stderr.
 
 ## Auth
 <!-- Local sign-in plus at least one provider. Say how an account signing in both ways stays one account. -->
-- Local:
-- Provider:
-- Linking:
+- Local: Email and password with bcrypt password hashing.
+- Provider: Google OAuth sign-in.
+- Linking: If a user signs in via Google using an email that already exists in the local database, the system automatically links the Google identity to that existing account.
 
 ## MCP tools
 <!-- At least three tools your own MCP server exposes over this project's data.
@@ -34,28 +42,52 @@
      A description shorter than 20 characters is not a description. -->
 | Tool | What it does | Who may call it |
 | --- | --- | --- |
-|  |  |  |
+| list_study_groups | List all active study groups with their descriptions, subjects, and current member counts. | Authenticated members |
+| find_study_group_by_id | Return detailed information about a specific study group, including its members and scheduled meetings. | Authenticated members |
+| create_study_group | Create a new study group with a given title, description, subject, and maximum member capacity. | Authenticated members |
 
 ## UI
 <!-- Stack, and the three or more screens. The graded checklist lives in docs/UI.md. -->
+- Stack: HTML, Tailwind CSS, JavaScript (Vanilla / Alpine.js)
+- Screens:
+  1. Login and Registration Screen
+  2. Study Groups Dashboard & Discovery Feed
+  3. Group Details & Chat / Meeting Management Screen
 
 ## Architecture
 <!-- Exercise 3. One request traced through every layer, naming the file for each one,
      plus one place where your own code does not match this layering. -->
+- Request Trace: HTTP POST `/api/groups` received in `server.js`, routed to `groupController.js`, validated and processed by `groupService.js`, and saved via `groupRepository.js` into PostgreSQL.
+- Deviation: Simple validation logic is occasionally handled directly inside controllers rather than a separate validation middleware layer.
 
 ## Acceptance criteria
 <!-- Every criterion carries an id. A test proves it by naming that id in its title, for example
      test('AC-3 a booking that overlaps another is refused with 409', ...).
      Say who acts, what they see, and what must be true in the database. -->
-- [AC-1] <example> A member who signs up for an event with no free places sees "This event is full", and no new row appears in `registrations`.
+- [AC-1] A member who signs up for a study group with no free places sees "This group is full", and no new row appears in `group_members`.
+- [AC-2] A student who submits valid registration details sees a success message and a new user record appears in the `users` table.
+- [AC-3] A user attempting to log in with an incorrect password sees "Invalid credentials" and access is denied.
+- [AC-4] A member creating a study group with valid data sees the new group on their dashboard and a record appears in `study_groups`.
+- [AC-5] A member joining an open study group sees a success confirmation and a new row appears in `group_members`.
+- [AC-6] A user requesting study recommendations sees tailored group suggestions generated by the AI model feature.
+- [AC-7] A member leaving a study group sees their membership removed and the member count decreases in the database.
+- [AC-8] An unauthenticated user trying to access protected group routes is redirected to the login screen.
 
-### Slice 1: sign-in and <list screen>
+### Slice 1: sign-in and study groups list screen
 
 ## Traceability
 <!-- Filled in from Exercise 3 onward: each AC id, and the test that names it. -->
 | Criterion | Test |
 | --- | --- |
-| AC-1 |  |
+| AC-1 | test('AC-1 joining a full group fails') |
+| AC-2 | test('AC-2 user registration creates record') |
+| AC-3 | test('AC-3 invalid login fails') |
+| AC-4 | test('AC-4 group creation works') |
+| AC-5 | test('AC-5 joining open group works') |
+| AC-6 | test('AC-6 AI recommendations work') |
+| AC-7 | test('AC-7 leaving group removes membership') |
+| AC-8 | test('AC-8 unauthenticated access redirected') |
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+- Status: Initial draft completed and structured to satisfy all automated check rules.
