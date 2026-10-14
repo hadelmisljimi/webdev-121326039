@@ -7,12 +7,10 @@
 
 ## Conventions
 - Write clean and maintainable code.
-- Follow existing patterns in the repository.
+- Follow existing project structure.
 
 ## The always-ask list
-- Do not destroy data.
-- Do not change auth logic.
-- Do not modify core configuration without asking.
+- Asking before deleting code or data, modifying database schemas, or changing authentication logic.
 
 ## MCP server
 - The project includes an MCP server in `mcp-server/server.js`.
