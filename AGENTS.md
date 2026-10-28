@@ -2,8 +2,9 @@
 
 ## Commands
 - Install: `npm install`
-- Run: `npm run mcp`
+- Run: `npm start`
 - Test: `npm test`
+- MCP server: `npm run mcp`
 
 ## Conventions
 - Write clean and maintainable code.

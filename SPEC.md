@@ -74,6 +74,9 @@ study groups
 - [AC-8] An unauthenticated user trying to access protected group routes is redirected to the login screen.
 
 ### Slice 1: sign-in and study groups list screen
+- [AC-9] A visitor who opens `/groups` without signing in lands on `/login` instead.
+- [AC-10] After signing in with a seeded account, `/groups` shows the seeded study groups, each with its title, subject, and member count.
+- [AC-11] Deleting one group row in the database and reloading `/groups` removes that group from the screen.
 
 ## Traceability
 <!-- Filled in from Exercise 3 onward: each AC id, and the test that names it. -->
@@ -87,6 +90,9 @@ study groups
 | AC-6 | test('AC-6 AI recommendations work') |
 | AC-7 | test('AC-7 leaving group removes membership') |
 | AC-8 | test('AC-8 unauthenticated access redirected') |
+| AC-9 | test('AC-9 groups page redirects without login') |
+| AC-10 | test('AC-10 seeded groups show on groups page') |
+| AC-11 | test('AC-11 deleting group removes it from screen') |
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
