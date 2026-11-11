@@ -1,72 +1,72 @@
 # StudyGroupManager
 
-## Опция на проекта
-Учебни групи (study groups)
+## Project option
+study groups
 
-## Цели
-- Позволява на студентите да създават, откриват и се присъединяват към учебни групи за конкретни предмети.
-- Осигурява пространства за реално време (чат и колаборация) за координиране на срещи между членовете.
+## Goals
+- Allow university students to create, discover, and join study groups for specific course subjects.
+- Provide real-time chat and collaboration spaces for group members to coordinate meetings.
 
-## Извън обхвата (Non-goals)
-- Няма да изграждаме вградена видеоконферентна услуга; вместо това ще се използват външни връзки (Zoom/Meet).
-- Няма да поддържаме автоматично следене на оценки или официални интеграции с университетски LMS системи.
-- Няма да имплементираме нативно мобилно приложение в този обхват; приложението ще бъде само адаптивно за уеб (web-responsive).
+## Non-goals
+- We will not build a built-in video conferencing service; external links (Zoom/Meet) will be used instead.
+- We will not support automated grade tracking or official university LMS integrations.
+- We will not implement a native mobile app in this scope; the application will be web-responsive only.
 
-## Ограничения (Constraints)
-- Сървърната част (backend) трябва да бъде написана на Node.js със сигурно управление на сесиите.
-- Всички заявки към базата данни трябва да бъдат защитени срещу SQL инжекции чрез ORM или параметризирани заявки.
-- Тестовете за прием (acceptance tests) трябва да стартират и преминават успешно в GitHub Actions CI.
+## Constraints
+- Backend must be written in Node.js with secure session management.
+- All database queries must be protected against SQL injection using an ORM or parameterized queries.
+- Acceptance tests must run and pass within GitHub Actions CI.
 
-## Моделът (AI feature)
-- Модел: gemini-1.5-flash
-- Вход: Текст на учебната програма (syllabus) и потребителски предпочитания (тема, наличност и ниво на умения)
-- Изход: Препоръчани учебни групи и персонализирани седмични учебни етапи (milestones)
-- При грешка: Показва приятелско съобщение „Препоръките от изкуствения интелект в момента са недостъпни, моля прегледайте групите ръчно“ и записва грешката в stderr.
+## The model feature
+- Model: gemini-1.5-flash
+- Input: Course syllabus text and user preferences (topic, availability, and skill level)
+- Output: Recommended study groups and personalized weekly study milestones
+- When it fails: Displays a friendly fallback message saying "AI recommendations are currently unavailable, please browse groups manually" and logs the error to stderr.
 
-## Удостоверяване (Auth)
-- Локално: Имейл и парола с хеширане на паролата чрез bcrypt.
-- Доставчик: Google OAuth вход.
-- Свързване (Linking): Ако потребител влезе чрез Google с имейл, който вече съществува в локалната база данни, системата автоматично свързва Google идентичността с този съществуващ акаунт.
+## Auth
+- Local: Email and password with bcrypt password hashing.
+- Provider: Google OAuth sign-in.
+- Linking: If a user signs in via Google using an email that already exists in the local database, the system automatically links the Google identity to that existing account.
 
-## MCP инструменти (MCP tools)
-| Инструмент | Какво прави | Кой може да го извиква |
+## MCP tools
+| Tool | What it does | Who may call it |
 | --- | --- | --- |
-| list_study_groups | Извежда списък с всички активни учебни групи, техните описания, предмети и текущ брой членове. | Удостоверени членове |
-| find_study_group_by_id | Връща подробна информация за конкретна учебна група, включително нейните членове и насрочени срещи. | Удостоверени членове |
-| create_study_group | Създава нова учебна група с дадено заглавие, описание, предмет и максимален капацитет от членове. | Удостоверени членове |
+| list_study_groups | List all active study groups with their descriptions, subjects, and current member counts. | Authenticated members |
+| find_study_group_by_id | Return detailed information about a specific study group, including its members and scheduled meetings. | Authenticated members |
+| create_study_group | Create a new study group with a given title, description, subject, and maximum member capacity. | Authenticated members |
 
-## Потребителски интерфейс (UI)
-- Технологичен стек: HTML, Tailwind CSS, JavaScript (Vanilla / Alpine.js)
-- Екрани:
-  1. Екран за вход и регистрация (Login and Registration)
-  2. Табло за управление и поток за откриване на учебни групи (Dashboard & Discovery Feed)
-  3. Детайли за групата и чат / управление на срещи (Group Details & Chat)
+## UI
+- Stack: HTML, Tailwind CSS, JavaScript (Vanilla / Alpine.js)
+- Screens:
+  1. Login and Registration Screen
+  2. Study Groups Dashboard & Discovery Feed
+  3. Group Details & Chat / Meeting Management Screen
 
-## Архитектура (Architecture)
-- Проследяване на заявка: HTTP POST заявка `/api/groups`, получена в `server.js`, насочена към `groupController.js`, валидирана и обработена от `groupService.js` и записана чрез `groupRepository.js` в PostgreSQL.
-- Отклонение (Deviation): Опростената валидация на входните данни понякога се извършва директно вътре в контролерите, вместо в отделен междинен слой (middleware) за валидация.
+## Architecture
+- Request Trace: HTTP POST `/api/groups` received in `server.js`, routed to `groupController.js`, validated and processed by `groupService.js`, and saved via `groupRepository.js` into PostgreSQL.
+- Deviation: Simple validation logic is occasionally handled directly inside controllers rather than a separate validation middleware layer.
 
-## Критерии за приемане (Acceptance criteria)
-- [AC-1] Член, който се опитва да се запише в учебна група без свободни места, вижда съобщение „Тази група е пълна“ и в таблицата `group_members` не се появява нов ред.
-- [AC-2] Студент, който изпрати валидни регистрационни данни, вижда съобщение за успех и в таблицата `users` се появява нов запис на потребител.
-- [AC-3] Потребител, който се опитва да влезе с грешна парола, вижда „Невалидни данни за вход“ и достъпът му е откажан.
-- [AC-4] Член, който създава учебна група с валидни данни, вижда новата група на своето табло и в `study_groups` се появява запис.
-- [AC-5] Член, който се присъединява към отворена учебна група, вижда потвърждение за успех и в `group_members` се появява нов ред.
-- [AC-6] Потребител, който изисква учебни препоръки, вижда подходящи предложения за групи, генерирани от функцията на AI модела.
-- [AC-7] Член, който напуска учебна група, вижда членството си премахнато, а броят на членовете в базата данни намалява.
-- [AC-8] Неавтентикиран потребител, който се опитва да достъпи защитени маршрути за групи, се пренасочва към екрана за вход.
+## Acceptance criteria
+- [AC-1] A member who signs up for a study group with no free places sees "This group is full", and no new row appears in `group_members`.
+- [AC-2] A student who submits valid registration details sees a success message and a new user record appears in the `users` table.
+- [AC-3] A user attempting to log in with an incorrect password sees "Invalid credentials" and access is denied.
+- [AC-4] A member creating a study group with valid data sees the new group on their dashboard and a record appears in `study_groups`.
+- [AC-5] A member joining an open study group sees a success confirmation and a new row appears in `group_members`.
+- [AC-6] A user requesting study recommendations sees tailored group suggestions generated by the AI model feature.
+- [AC-7] A member leaving a study group sees their membership removed and the member count decreases in the database.
+- [AC-8] An unauthenticated user trying to access protected group routes is redirected to the login screen.
 
-### Слайс 1: Вход и екран със списък на учебните групи
-- [AC-9] Посетител, който отвори `/groups` без да е влязъл в системата, попада на `/login`.
-- [AC-10] След влизане в системата със seeded акаунт, `/groups` показва предварително заложените учебни групи, всяка със своето заглавие, предмет и брой членове.
-- [AC-11] Изтриването на един ред на група в базата данни и презареждането на `/groups` премахва тази група от екрана.
+### Slice 1: sign-in and study groups list screen
+- [AC-9] A visitor who opens `/groups` without signing in lands on `/login` instead.
+- [AC-10] After signing in with a seeded account, `/groups` shows the seeded study groups, each with its title, subject, and member count.
+- [AC-11] Deleting one group row in the database and reloading `/groups` removes that group from the screen.
 
-### Слайс: Присъединяване към учебна група с проверка на капацитета
-- [AC-12] Член, който се опитва да се присъедини към учебна група, достигнала максималния си капацитет, получава откачен отговор с 409 Conflict и четимо съобщение за грешка.
-- [AC-13] Само автентикиран потребител може да изпрати заявка за присъединяване към група; неавтентикираните заявки получават 401 Unauthorized.
+### Slice: join a study group with capacity check
+- [AC-12] A member attempting to join a study group that has reached its maximum capacity is refused with 409 Conflict and a readable error message.
+- [AC-13] Only an authenticated user can send a request to join a group; unauthenticated requests receive 401 Unauthorized.
 
-## Проследимост (Traceability)
-| Критерий | Тест |
+## Traceability
+| Criterion | Test |
 | --- | --- |
 | AC-1 | test('AC-1 joining a full group fails') |
 | AC-2 | test('AC-2 user registration creates record') |
@@ -82,17 +82,5 @@
 | AC-12 | test('AC-12 joining a full group is refused with 409') |
 | AC-13 | test('AC-13 unauthenticated join attempt receives 401') |
 
-## Спецификация спрямо резултат (Spec vs result)
-- Статус: Първоначалната чернова е завършена и структурирана така, че да отговаря на всички правила за автоматични проверки.
-
-## Архитектура (Architecture - Разширена)
-
-Една заявка, `POST /api/groups/:id/join`, преминава през всеки слой:
-
-1. `src/server.js` получава HTTP заявката и управлява маршрутизацията (routing).
-2. `src/routes/groups.js` обработва маршрута и проверява автентикацията.
-3. `src/services/groupService.js` съдържа правилото за бизнес логика (проверка на капацитета на групата) и хвърля грешки при нужда.
-4. `src/repositories/groupRepository.js` обработва заявките към базата данни в PostgreSQL.
-5. Обратен път към клиента: `src/web/api.js` обработва клиентските заявки, `app.js` управлява състоянието (state), а `ui.js` изобразява екрана.
-
-Отклонение (Deviation): Опростената валидация на входните данни понякога се прави директно в контролерите вместо в отделен слой за валидация.
+## Spec vs result
+- Status: Initial draft completed and structured to satisfy all automated check rules.
