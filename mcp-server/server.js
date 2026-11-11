@@ -1,7 +1,7 @@
-
 const readline = require('node:readline');
 const fs = require('node:fs');
 const path = require('node:path');
+const { pathToFileURL } = require('node:url');
 
 // Четене на файла с лекциите веднъж при стартиране
 const lectures = JSON.parse(fs.readFileSync(path.join(__dirname, 'lectures.json'), 'utf8'));
@@ -109,9 +109,10 @@ async function handle(msg) {
       return textResult(msg.id, lectures.map((l) => l.number + '. ' + l.title).join('\n'), false);
     }
 
-    // Динамично зареждане на слоя за услуги (избягва грешки при стартиране на сървъра)
+    // Безопасно динамично зареждане чрез пълен абсолютен URL път до service файла
     try {
-      const groupService = await import('../services/groupService.js');
+      const servicePath = path.resolve(__dirname, '../services/groupService.js');
+      const groupService = await import(pathToFileURL(servicePath).href);
 
       if (name === 'list_study_groups') {
         const groups = await groupService.listGroups();
