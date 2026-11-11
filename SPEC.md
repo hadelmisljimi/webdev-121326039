@@ -110,11 +110,10 @@ study groups
 
 One request, `POST /api/groups/:id/join`, through every layer:
 
-1. `src/server.js` (или `src/app.js`) приема HTTP заявката и я предава към маршрута.
-2. `src/routes/groups.js` (или съответният рутер) обработва метода и пътя, проверява дали потребителят е влязъл (връща 401, ако няма сесия) и извиква функцията от услугата.
-3. `src/services/groupService.js` съдържа бизнес правилото (например проверка дали групата е пълна) и вдига съответната грешка (напр. 409 Conflict при препълване).
-4. `src/repositories/groupRepository.js` (или моделът) е единственото място, където се изпълняват заявките към базата данни (PostgreSQL).
-5. Обратният път към браузъра: в клиентския JavaScript `src/web/api.js` хваща грешката или успешния отговор, `app.js` управлява състоянието (state), а `ui.js` визуализира промените (например състояние на зареждане, празен списък или грешка).
+1. `src/server.js` receives the HTTP request and handles routing.
+2. `src/routes/groups.js` processes the route and checks authentication.
+3. `src/services/groupService.js` holds the business logic rule (checking group capacity) and throws errors.
+4. `src/repositories/groupRepository.js` handles database queries in PostgreSQL.
+5. Back out: `src/web/api.js` handles client requests, `app.js` manages state, and `ui.js` draws the screen.
 
-**Отклонение от разделянето на слоеве (Deviation):**
-Простичката валидация на входните данни понякога се прави директно в контролера вместо в отделен слой за валидация, за да се опрости структурата на кода.
+Deviation: Simple validation is occasionally handled in controllers instead of a separate validation layer.
