@@ -78,6 +78,12 @@ study groups
 - [AC-10] After signing in with a seeded account, `/groups` shows the seeded study groups, each with its title, subject, and member count.
 - [AC-11] Deleting one group row in the database and reloading `/groups` removes that group from the screen.
 
+### Slice: join a study group with capacity check
+- [AC-12] A member attempting to join a study group that has reached its maximum capacity is refused with 409 Conflict and a readable error message.
+- [AC-13] Only an authenticated user can send a request to join a group; unauthenticated requests receive 401 Unauthorized.
+
+
+
 ## Traceability
 <!-- Filled in from Exercise 3 onward: each AC id, and the test that names it. -->
 | Criterion | Test |
@@ -93,7 +99,22 @@ study groups
 | AC-9 | test('AC-9 groups page redirects without login') |
 | AC-10 | test('AC-10 seeded groups show on groups page') |
 | AC-11 | test('AC-11 deleting group removes it from screen') |
+| AC-12 | test('joining a full group is refused with 409')|
+| AC-13 | test('AC-13 unauthenticated join attempt receives 401')|
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
 - Status: Initial draft completed and structured to satisfy all automated check rules.
+
+## Architecture
+
+One request, `POST /api/groups/:id/join`, through every layer:
+
+1. `src/server.js` (или `src/app.js`) приема HTTP заявката и я предава към маршрута.
+2. `src/routes/groups.js` (или съответният рутер) обработва метода и пътя, проверява дали потребителят е влязъл (връща 401, ако няма сесия) и извиква функцията от услугата.
+3. `src/services/groupService.js` съдържа бизнес правилото (например проверка дали групата е пълна) и вдига съответната грешка (напр. 409 Conflict при препълване).
+4. `src/repositories/groupRepository.js` (или моделът) е единственото място, където се изпълняват заявките към базата данни (PostgreSQL).
+5. Обратният път към браузъра: в клиентския JavaScript `src/web/api.js` хваща грешката или успешния отговор, `app.js` управлява състоянието (state), а `ui.js` визуализира промените (например състояние на зареждане, празен списък или грешка).
+
+**Отклонение от разделянето на слоеве (Deviation):**
+Простичката валидация на входните данни понякога се прави директно в контролера вместо в отделен слой за валидация, за да се опрости структурата на кода.
