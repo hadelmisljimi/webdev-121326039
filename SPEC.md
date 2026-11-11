@@ -43,8 +43,16 @@ study groups
   3. Group Details & Chat / Meeting Management Screen
 
 ## Architecture
-- Request Trace: HTTP POST `/api/groups` received in `server.js`, routed to `groupController.js`, validated and processed by `groupService.js`, and saved via `groupRepository.js` into PostgreSQL.
-- Deviation: Simple validation logic is occasionally handled directly inside controllers rather than a separate validation middleware layer.
+
+One request, `POST /api/groups`, through every layer:
+
+1. `server.js` receives the HTTP request and matches the method and path.
+2. `groupController.js` handles the request parameters and calls the service layer.
+3. `groupService.js` contains the business rules and logic.
+4. Database layer executes the parameterized SQL query against PostgreSQL.
+5. Back out: in the browser, the frontend script sends the REST request, handles state, and updates the UI.
+
+Where this codebase does not match its own layering: Simple validation logic is occasionally handled directly inside controllers rather than a separate validation middleware layer.
 
 ## Acceptance criteria
 - [AC-1] A member who signs up for a study group with no free places sees "This group is full", and no new row appears in `group_members`.

@@ -1,6 +1,11 @@
 const readline = nodeRequire ? undefined : require('node:readline'); // поддържа стандартен node import
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = nodeRequire ? undefined : require('node:fs');
+const path = nodeRequire ? undefined : require('node:path');
+
+// Импорт на реалния слой за услуги (тук свързваме MCP със същите функции, които ползва API-то)
+// Увери се, че пътят до services папка съответства на структурата ти (например от mcp-server/ към root/services)
+import { listGroups, getGroupById, createGroup } from '../services/groupService.js';
+// Ако ползваш друг файл в services, промени пътя коректно.
 
 // Четене на файла с лекциите веднъж при стартиране
 const lectures = JSON.parse(fs.readFileSync(path.join(__dirname, 'lectures.json'), 'utf8'));
@@ -17,7 +22,7 @@ function textResult(id, text, isError) {
   };
 }
 
-// Списък с инструменти, които сървърът предлага (включително новите за учебни групи)
+// Списък с инструменти, които сървърът предлага
 const tools = [
   {
     name: 'find_lecture',
@@ -68,7 +73,7 @@ function send(reply) {
 }
 
 // Главна функция за обработка на съобщения и грешки
-function handle(msg) {
+async function handle(msg) {
   if (msg.method === 'initialize') {
     return {
       jsonrpc: '2.0',
@@ -93,6 +98,9 @@ function handle(msg) {
     const name = msg.params.name;
     const args = msg.params.arguments || {};
 
+    // MCP сървърът знае кой извиква инструмента (контекст / caller)
+    const caller = msg.params.context?.user || msg.params._meta?.caller || 'authenticated-member';
+
     if (name === 'find_lecture') {
       const lecture = lectures.find((l) => l.number === args.number);
       if (!lecture) {
@@ -105,17 +113,25 @@ function handle(msg) {
       return textResult(msg.id, lectures.map((l) => l.number + '. ' + l.title).join('\n'), false);
     }
 
-    // Прикачени нови инструменти за Упражнение 3 (Учебни групи)
-    if (name === 'list_study_groups') {
-      return textResult(msg.id, 'Списъкът с учебни групи е на разположение в базата данни.', false);
-    }
+    // Реално извикване на слоя за услуги вместо твърдо кодиран текст
+    try {
+      if (name === 'list_study_groups') {
+        const groups = await listGroups();
+        return textResult(msg.id, JSON.stringify(groups), false);
+      }
 
-    if (name === 'find_study_group_by_id') {
-      return textResult(msg.id, 'Намерена е учебна група с ID: ' + args.id, false);
-    }
+      if (name === 'find_study_group_by_id') {
+        const group = await getGroupById(args.id);
+        return textResult(msg.id, JSON.stringify(group), false);
+      }
 
-    if (name === 'create_study_group') {
-      return textResult(msg.id, 'Успешно създадена нова учебна група: ' + args.title, false);
+      if (name === 'create_study_group') {
+        // Предаваме caller (кой извиква инструмента) към услугата
+        const newGroup = await createGroup({ ...args, creator: caller });
+        return textResult(msg.id, 'Успешно създадена нова учебна група от ' + caller + ': ' + JSON.stringify(newGroup), false);
+      }
+    } catch (error) {
+      return textResult(msg.id, 'Грешка при изпълнение на услугата: ' + error.message, true);
     }
 
     // Непознат инструмент: грешка в протокола -32602
@@ -132,8 +148,8 @@ function handle(msg) {
 
 // Четене от стандартния вход (stdin)
 const lines = require('node:readline').createInterface({ input: process.stdin });
-lines.on('line', (line) => {
+lines.on('line', async (line) => {
   console.error('получено: ' + line);
-  const reply = handle(JSON.parse(line));
+  const reply = await handle(JSON.parse(line));
   if (reply) send(reply);
 });
