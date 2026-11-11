@@ -1,12 +1,6 @@
-const readline = nodeRequire ? undefined : require('node:readline'); // поддържа стандартен node import
-const fs = nodeRequire ? undefined : require('node:fs');
-const path = nodeRequire ? undefined : require('node:path');
-
-// Импорт на реалния слой за услуги (тук свързваме MCP със същите функции, които ползва API-то)
-// Увери се, че пътят до services папка съответства на структурата ти (например от mcp-server/ към root/services)
-
-import { listGroups, getGroupById, createGroup } from '../services/groupService.js';
-// Ако ползваш друг файл в services, промени пътя коректно.
+const readline = require('node:readline');
+const fs = require('node:fs');
+const path = require('node:path');
 
 // Четене на файла с лекциите веднъж при стартиране
 const lectures = JSON.parse(fs.readFileSync(path.join(__dirname, 'lectures.json'), 'utf8'));
@@ -114,21 +108,22 @@ async function handle(msg) {
       return textResult(msg.id, lectures.map((l) => l.number + '. ' + l.title).join('\n'), false);
     }
 
-    // Реално извикване на слоя за услуги вместо твърдо кодиран текст
+    // Динамично зареждане на слоя за услуги (избягва грешки при стартиране на сървъра)
     try {
+      const groupService = await import('../services/groupService.js');
+
       if (name === 'list_study_groups') {
-        const groups = await listGroups();
+        const groups = await groupService.listGroups();
         return textResult(msg.id, JSON.stringify(groups), false);
       }
 
       if (name === 'find_study_group_by_id') {
-        const group = await getGroupById(args.id);
+        const group = await groupService.getGroupById(args.id);
         return textResult(msg.id, JSON.stringify(group), false);
       }
 
       if (name === 'create_study_group') {
-        // Предаваме caller (кой извиква инструмента) към услугата
-        const newGroup = await createGroup({ ...args, creator: caller });
+        const newGroup = await groupService.createGroup({ ...args, creator: caller });
         return textResult(msg.id, 'Успешно създадена нова учебна група от ' + caller + ': ' + JSON.stringify(newGroup), false);
       }
     } catch (error) {
@@ -148,9 +143,13 @@ async function handle(msg) {
 }
 
 // Четене от стандартния вход (stdin)
-const lines = require('node:readline').createInterface({ input: process.stdin });
+const lines = readline.createInterface({ input: process.stdin });
 lines.on('line', async (line) => {
-  console.error('получено: ' + line);
-  const reply = await handle(JSON.parse(line));
-  if (reply) send(reply);
+  try {
+    console.error('получено: ' + line);
+    const reply = await handle(JSON.parse(line));
+    if (reply) send(reply);
+  } catch (err) {
+    console.error('Грешка при обработка на ред:', err);
+  }
 });
