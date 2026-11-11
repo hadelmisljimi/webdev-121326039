@@ -4,6 +4,7 @@ const path = nodeRequire ? undefined : require('node:path');
 
 // Импорт на реалния слой за услуги (тук свързваме MCP със същите функции, които ползва API-то)
 // Увери се, че пътят до services папка съответства на структурата ти (например от mcp-server/ към root/services)
+
 import { listGroups, getGroupById, createGroup } from '../services/groupService.js';
 // Ако ползваш друг файл в services, промени пътя коректно.
 
