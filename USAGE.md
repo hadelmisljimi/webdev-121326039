@@ -6,5 +6,6 @@ One row per agent session. In Gemini CLI, type `/stats` before you quit and copy
 |---|---|---|---|---|---|
 | 2026-10-14 | Gemini CLI | 15 400 | 2 300 | - | $0.00 |
 | 2026-11-25 | Gemini | - | - | - | $0.00 |
+| 2026-11-25 | Gemini CLI (failed/discarded) | 0 | 0 | - | $0.00 |
 
-Price list note: Free tier / educational session usage recorded at $0.00 actual charge; token counts not reported by `/stats` in this session are marked `-`.
+Price list note: Free tier / educational session usage recorded at $0.00 actual charge; token counts not reported by `/stats` or unavailable on failed calls are marked `-` or `0`.
