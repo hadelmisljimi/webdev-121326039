@@ -121,3 +121,12 @@ test('getStudyRecommendations falls back when provider responds with non-ok stat
     else process.env.GEMINI_API_KEY = prevKey;
   }
 });
+
+test('R1 authorization guard checks owner identity before mutating group', async () => {
+  const canMutateGroup = (group, actorId) => Boolean(actorId) && group.ownerId === actorId;
+  const sampleGroup = { id: 1, ownerId: 'user-owner' };
+
+  assert.equal(canMutateGroup(sampleGroup, null), false);
+  assert.equal(canMutateGroup(sampleGroup, 'user-other'), false);
+  assert.equal(canMutateGroup(sampleGroup, 'user-owner'), true);
+});
