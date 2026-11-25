@@ -228,12 +228,12 @@ function escapeHtml(val) {
 
 function renderHomePage(user) {
   const css = "\n" +
-    "    :root { --bg: #f4f7fb; --surface: #ffffff; --surface-alt: #f8fafc; --text: #0f172a; --muted: #475569; --subtle: #64748b; --border: #e2e8f0; --border-strong: #cbd5e1; --primary: #2563eb; --primary-hover: #1d4ed8; --primary-soft: #eff6ff; --accent-indigo: #4f46e5; --accent-teal: #0d9488; --success-bg: #ecfdf5; --success-text: #065f46; --success-border: #a7f3d0; --error-bg: #fef2f2; --error-text: #991b1b; --error-border: #fecaca; --warn-bg: #fffbeb; --warn-text: #92400e; --radius: 16px; --radius-sm: 10px; --shadow: 0 14px 34px -16px rgba(15, 23, 42, 0.14), 0 4px 12px -4px rgba(15, 23, 42, 0.05); }\n" +
+    "    :root { --bg: #f4f7fb; --surface: #ffffff; --surface-alt: #f8fafc; --text: #0f172a; --muted: #475569; --subtle: #64748b; --border: #e2e8f0; --border-strong: #cbd5e1; --primary: #2563eb; --primary-hover: #1d4ed8; --primary-soft: #eff6ff; --accent-teal: #0d9488; --accent-indigo: #4f46e5; --success-bg: #ecfdf5; --success-text: #065f46; --success-border: #a7f3d0; --error-bg: #fef2f2; --error-text: #991b1b; --error-border: #fecaca; --warn-bg: #fffbeb; --warn-text: #92400e; --radius: 16px; --radius-sm: 10px; --shadow: 0 14px 34px -16px rgba(15, 23, 42, 0.14), 0 4px 12px -4px rgba(15, 23, 42, 0.05); }\n" +
     "    * { box-sizing: border-box; }\n" +
     "    body { margin: 0; font-family: \"Inter\", system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif; background: radial-gradient(circle at top left, #e0e7ff 0%, var(--bg) 42%, var(--bg) 100%); color: var(--text); line-height: 1.5; min-height: 100vh; }\n" +
     "    :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }\n" +
-    "    .topbar { position: sticky; top: 0; z-index: 30; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }\n" +
-    "    .topbar-inner { max-width: 1080px; margin: 0 auto; padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }\n" +
+    "    .topbar { position: sticky; top: 0; z-index: 30; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }\n" +
+    "    .topbar-inner { max-width: 1120px; margin: 0 auto; padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }\n" +
     "    .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--text); }\n" +
     "    .brand-mark { width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, #2563eb, #4f46e5); color: #ffffff; font-weight: 700; font-size: 0.9rem; display: grid; place-items: center; box-shadow: 0 6px 14px rgba(37, 99, 235, 0.24); }\n" +
     "    .brand-title { font-weight: 700; font-size: 1rem; letter-spacing: -0.015em; display: block; }\n" +
@@ -251,26 +251,48 @@ function renderHomePage(user) {
     "    .account-popover { display: none; position: absolute; right: 0; top: 54px; width: 325px; max-width: calc(100vw - 32px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; z-index: 50; }\n" +
     "    .account-popover.open { display: block; }\n" +
     "    .popover-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }\n" +
-    "    .popover-title { font-weight: 700; font-size: 0.96rem; color: var(--text); }\n" +
-    "    .popover-close { background: transparent; border: none; color: var(--subtle); font-size: 1.15rem; padding: 2px 6px; cursor: pointer; line-height: 1; }\n" +
+    "    .popover-title { font-weight: 700; font-size: 0.98rem; color: var(--text); }\n" +
+    "    .popover-close { background: transparent; border: none; color: var(--subtle); font-size: 1.2rem; padding: 2px 6px; cursor: pointer; line-height: 1; }\n" +
     "    .popover-close:hover { color: var(--text); }\n" +
-    "    .container { max-width: 1080px; margin: 0 auto; padding: 40px 24px 64px; }\n" +
-    "    .hero { margin-bottom: 28px; }\n" +
-    "    .hero h1 { margin: 0 0 6px; font-size: clamp(1.65rem, 3vw, 2.15rem); font-weight: 700; letter-spacing: -0.025em; }\n" +
-    "    .hero p { margin: 0; color: var(--muted); font-size: 0.95rem; }\n" +
-    "    .hub-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }\n" +
-    "    .hub-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: space-between; gap: 20px; cursor: pointer; transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease; text-align: left; }\n" +
+    "    .container { max-width: 1120px; margin: 0 auto; padding: 36px 24px 64px; }\n" +
+    "    .hero { margin-bottom: 24px; }\n" +
+    "    .hero h1 { margin: 0 0 4px; font-size: clamp(1.65rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -0.025em; }\n" +
+    "    .hero p { margin: 0; color: var(--muted); font-size: 0.94rem; }\n" +
+    "    .hub-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }\n" +
+    "    .hub-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: space-between; gap: 18px; cursor: pointer; transition: transform 0.16s ease, border-color 0.16s ease; }\n" +
     "    .hub-card:hover { transform: translateY(-2px); border-color: #93c5fd; }\n" +
-    "    .hub-icon { width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 14px; }\n" +
+    "    .hub-icon { width: 42px; height: 42px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 12px; }\n" +
     "    .hub-icon.groups { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }\n" +
     "    .hub-icon.ai { background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; }\n" +
-    "    .hub-title { margin: 0 0 6px; font-size: 1.24rem; font-weight: 700; letter-spacing: -0.015em; color: var(--text); }\n" +
-    "    .hub-desc { margin: 0; font-size: 0.9rem; color: var(--muted); }\n" +
-    "    .hub-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border); }\n" +
+    "    .hub-title { margin: 0 0 4px; font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em; }\n" +
+    "    .hub-desc { margin: 0; font-size: 0.88rem; color: var(--muted); }\n" +
+    "    .hub-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid var(--border); }\n" +
     "    .hub-stat { font-size: 0.82rem; font-weight: 600; color: var(--muted); }\n" +
+    "    .section-block { margin-top: 32px; }\n" +
+    "    .section-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }\n" +
+    "    .section-title { margin: 0; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.015em; }\n" +
+    "    .all-groups-stack { display: flex; flex-direction: column; gap: 12px; }\n" +
+    "    .cohort-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; cursor: pointer; transition: border-color 0.15s ease, transform 0.15s ease; }\n" +
+    "    .cohort-card:hover { border-color: #93c5fd; transform: translateY(-1px); }\n" +
+    "    .cohort-main { flex: 1 1 320px; min-width: 240px; }\n" +
+    "    .cohort-title { font-weight: 700; font-size: 1rem; color: var(--text); }\n" +
+    "    .cohort-meta-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px; }\n" +
+    "    .tag { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; background: #e2e8f0; color: #334155; }\n" +
+    "    .tag.time { background: #eef2ff; color: #3730a3; }\n" +
+    "    .tag.open { background: var(--success-bg); color: var(--success-text); }\n" +
+    "    .tag.full { background: var(--warn-bg); color: var(--warn-text); }\n" +
+    "    .tag.joined { background: #dbeafe; color: #1d4ed8; }\n" +
+    "    .cohort-side { flex: 0 0 250px; min-width: 210px; display: flex; flex-direction: column; gap: 6px; }\n" +
+    "    .capacity-text { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 600; color: var(--muted); }\n" +
+    "    .meter-track { width: 100%; height: 8px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }\n" +
+    "    .meter-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #0d9488, #2563eb); transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1); }\n" +
+    "    .meter-fill.full { background: linear-gradient(90deg, #f59e0b, #ea580c); }\n" +
+    "    .cohort-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }\n" +
+    "    .sub-card { background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }\n" +
     "    .field-block { display: grid; gap: 4px; }\n" +
     "    .field-hint { font-size: 0.72rem; color: var(--subtle); line-height: 1.3; }\n" +
     "    .form-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }\n" +
+    "    .form-grid-2 { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 10px; }\n" +
     "    .form-grid-stack { display: grid; grid-template-columns: 1fr; gap: 10px; }\n" +
     "    .section-label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }\n" +
     "    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px; }\n" +
@@ -287,6 +309,8 @@ function renderHomePage(user) {
     "    .btn-secondary:hover:not(:disabled) { background: var(--surface-alt); }\n" +
     "    .btn-soft { background: var(--primary-soft); color: var(--primary); }\n" +
     "    .btn-soft:hover:not(:disabled) { background: #dbeafe; }\n" +
+    "    .btn-danger-soft { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }\n" +
+    "    .btn-danger-soft:hover:not(:disabled) { background: #fee2e2; }\n" +
     "    .btn-sm { padding: 6px 11px; font-size: 0.8rem; border-radius: 8px; }\n" +
     "    .divider { margin: 16px 0; border: none; border-top: 1px solid var(--border); }\n" +
     "    .banner { margin-top: 10px; padding: 9px 12px; border-radius: var(--radius-sm); font-size: 0.83rem; font-weight: 500; display: none; }\n" +
@@ -295,12 +319,11 @@ function renderHomePage(user) {
     "    .banner.success { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }\n" +
     "    .banner.error { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border); }\n" +
     "    .group-list { display: grid; gap: 9px; margin-top: 10px; }\n" +
-    "    .group-card { border: 1px solid var(--border); background: var(--surface-alt); border-radius: var(--radius-sm); padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }\n" +
+    "    .group-card { border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius-sm); padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }\n" +
     "    .group-name { font-weight: 600; font-size: 0.92rem; color: var(--text); }\n" +
-    "    .group-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 4px; align-items: center; }\n" +
-    "    .tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font-size: 0.74rem; font-weight: 600; background: #e2e8f0; color: #334155; }\n" +
-    "    .tag.open { background: var(--success-bg); color: var(--success-text); }\n" +
-    "    .tag.full { background: var(--warn-bg); color: var(--warn-text); }\n" +
+    "    .detail-card { background: var(--surface); border: 1px solid #bfdbfe; border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 12px; }\n" +
+    "    .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; font-size: 0.85rem; margin-top: 8px; }\n" +
+    "    .confirm-box { margin-top: 12px; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--surface-alt); border: 1px solid var(--border-strong); }\n" +
     "    .state-box { text-align: center; padding: 20px 14px; border: 1px dashed var(--border-strong); border-radius: var(--radius-sm); background: var(--surface-alt); color: var(--muted); font-size: 0.86rem; }\n" +
     "    .profile-box { padding: 12px; border-radius: var(--radius-sm); background: var(--surface-alt); border: 1px solid var(--border); }\n" +
     "    .profile-email { font-weight: 600; font-size: 0.9rem; color: var(--text); word-break: break-word; }\n" +
@@ -308,9 +331,9 @@ function renderHomePage(user) {
     "    .ai-result { margin-top: 12px; padding: 13px 14px; border-radius: var(--radius-sm); background: var(--surface-alt); border: 1px solid var(--border); font-size: 0.88rem; color: var(--text); white-space: pre-wrap; }\n" +
     "    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px); z-index: 60; align-items: center; justify-content: center; padding: 18px; }\n" +
     "    .modal-backdrop.open { display: flex; }\n" +
-    "    .modal-panel { width: 100%; max-width: 680px; max-height: 88vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }\n" +
-    "    @media (max-width: 820px) { .hub-grid { grid-template-columns: 1fr; } .form-grid-3 { grid-template-columns: 1fr; } }\n" +
-    "    @media (max-width: 600px) { .container { padding: 28px 16px 48px; } .hub-card, .modal-panel { padding: 18px; } }\n" +
+    "    .modal-panel { width: 100%; max-width: 720px; max-height: 88vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }\n" +
+    "    @media (max-width: 820px) { .hub-grid, .form-grid-3, .form-grid-2, .detail-grid { grid-template-columns: 1fr; } }\n" +
+    "    @media (max-width: 600px) { .container { padding: 28px 16px 48px; } .hub-card, .modal-panel, .cohort-card { padding: 16px; } }\n" +
     "";
 
   const safeEmail = escapeHtml(user?.email || "");
@@ -397,14 +420,14 @@ function renderHomePage(user) {
     "  <main class=\"container\">\n" +
     "    <div class=\"hero\">\n" +
     "      <h1>Study Workspace</h1>\n" +
-    "      <p>Select a module below to open its full workspace window.</p>\n" +
+    "      <p>Open Study Groups or AI Advisor, or inspect every study group below.</p>\n" +
     "    </div>\n" +
     "    <div class=\"hub-grid\">\n" +
     "      <div class=\"hub-card\" role=\"button\" tabindex=\"0\" onclick=\"openModal('groupsModal')\" onkeydown=\"if(event.key==='Enter'||event.key===' '){event.preventDefault();openModal('groupsModal');}\">\n" +
     "        <div>\n" +
     "          <span class=\"hub-icon groups\" aria-hidden=\"true\">SG</span>\n" +
     "          <h2 class=\"hub-title\">Study Groups</h2>\n" +
-    "          <p class=\"hub-desc\">Create a new study group, join or leave by ID or name prefix, and browse active cohorts.</p>\n" +
+    "          <p class=\"hub-desc\">Create a new study group, search by ID or name prefix, and manage membership.</p>\n" +
     "        </div>\n" +
     "        <div class=\"hub-meta\">\n" +
     "          <span class=\"hub-stat\" id=\"hubGroupsStat\">Loading cohorts...</span>\n" +
@@ -415,14 +438,23 @@ function renderHomePage(user) {
     "        <div>\n" +
     "          <span class=\"hub-icon ai\" aria-hidden=\"true\">AI</span>\n" +
     "          <h2 class=\"hub-title\">AI Advisor</h2>\n" +
-    "          <p class=\"hub-desc\">Get focused study plans, topic breakdowns, and schedule recommendations tailored to your course.</p>\n" +
+    "          <p class=\"hub-desc\">Get focused study plans, topic breakdowns, and schedule recommendations.</p>\n" +
     "        </div>\n" +
     "        <div class=\"hub-meta\">\n" +
-    "          <span class=\"hub-stat\">Personalized study tips</span>\n" +
+    "          <span class=\"hub-stat\">Smart study guidance</span>\n" +
     "          <span class=\"btn btn-soft btn-sm\">Open AI Advisor</span>\n" +
     "        </div>\n" +
     "      </div>\n" +
     "    </div>\n" +
+    "    <section class=\"section-block\" aria-label=\"All Study Groups\">\n" +
+    "      <div class=\"section-header\">\n" +
+    "        <h2 class=\"section-title\">All Study Groups</h2>\n" +
+    "        <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"loadGroups()\">Refresh Groups</button>\n" +
+    "      </div>\n" +
+    "      <div id=\"allGroupsList\" class=\"all-groups-stack\" aria-live=\"polite\">\n" +
+    "        <div class=\"state-box\">Loading study groups...</div>\n" +
+    "      </div>\n" +
+    "    </section>\n" +
     "  </main>\n" +
     "  <div id=\"groupsModal\" class=\"modal-backdrop\" role=\"dialog\" aria-modal=\"true\" aria-label=\"Study Groups Workspace\">\n" +
     "    <div class=\"modal-panel\">\n" +
@@ -430,31 +462,52 @@ function renderHomePage(user) {
     "        <span class=\"popover-title\">Study Groups</span>\n" +
     "        <button class=\"popover-close\" type=\"button\" aria-label=\"Close window\" onclick=\"closeModal('groupsModal')\">&times;</button>\n" +
     "      </div>\n" +
-    "      <span class=\"section-label\">Create New Group</span>\n" +
-    "      <div class=\"form-grid-3\">\n" +
-    "        <div class=\"field-block\"><input id=\"groupTitle\" type=\"text\" placeholder=\"Group title\" aria-label=\"Group title\" /><span class=\"field-hint\">Short descriptive cohort name.</span></div>\n" +
-    "        <div class=\"field-block\"><input id=\"groupSubject\" type=\"text\" placeholder=\"Subject\" aria-label=\"Subject\" /><span class=\"field-hint\">Course or topic area.</span></div>\n" +
-    "        <div class=\"field-block\"><input id=\"groupCapacity\" type=\"number\" min=\"1\" placeholder=\"Max capacity\" aria-label=\"Max capacity\" /><span class=\"field-hint\">Maximum seats (1 or more).</span></div>\n" +
+    "      <div class=\"sub-card\">\n" +
+    "        <span class=\"section-label\">Create New Group</span>\n" +
+    "        <div class=\"form-grid-3\">\n" +
+    "          <div class=\"field-block\"><input id=\"groupTitle\" type=\"text\" placeholder=\"Group title\" aria-label=\"Group title\" /><span class=\"field-hint\">Cohort name (e.g. Algorithms).</span></div>\n" +
+    "          <div class=\"field-block\"><input id=\"groupSubject\" type=\"text\" placeholder=\"Subject\" aria-label=\"Subject\" /><span class=\"field-hint\">Course or topic.</span></div>\n" +
+    "          <div class=\"field-block\"><input id=\"groupCapacity\" type=\"number\" min=\"1\" placeholder=\"Max capacity\" aria-label=\"Max capacity\" /><span class=\"field-hint\">Total seats (min. 1).</span></div>\n" +
+    "        </div>\n" +
+    "        <div class=\"btn-row\">\n" +
+    "          <button class=\"btn-primary btn-sm\" type=\"button\" onclick=\"createNewGroup()\">Create Group</button>\n" +
+    "        </div>\n" +
     "      </div>\n" +
-    "      <div class=\"btn-row\">\n" +
-    "        <button class=\"btn-primary btn-sm\" type=\"button\" onclick=\"createNewGroup()\">Create Group</button>\n" +
-    "        <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"loadGroups()\">Refresh</button>\n" +
-    "      </div>\n" +
-    "      <hr class=\"divider\" />\n" +
-    "      <span class=\"section-label\">Join or Leave by ID or Name Prefix</span>\n" +
-    "      <div class=\"form-grid-3\">\n" +
-    "        <div class=\"field-block\"><input id=\"membershipGroupId\" type=\"number\" min=\"1\" placeholder=\"Group ID\" aria-label=\"Group ID\" /><span class=\"field-hint\">Exact numeric ID or auto-filled below.</span></div>\n" +
-    "        <div class=\"field-block\" style=\"grid-column: span 2;\"><input id=\"groupPrefixQuery\" type=\"text\" placeholder=\"Type starting letters of group name...\" aria-label=\"Search group by name prefix\" oninput=\"filterGroupsByPrefix()\" /><span class=\"field-hint\">Matches from the start: 1 letter, then 2 letters, and so on.</span></div>\n" +
-    "      </div>\n" +
-    "      <div class=\"btn-row\">\n" +
-    "        <button class=\"btn-primary btn-sm\" type=\"button\" onclick=\"joinSelectedGroup()\">Join Group</button>\n" +
-    "        <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"leaveSelectedGroup()\">Leave Group</button>\n" +
+    "      <div class=\"sub-card\" style=\"margin-top:14px;\">\n" +
+    "        <span class=\"section-label\">Join or Leave Group (by ID or Name)</span>\n" +
+    "        <div class=\"form-grid-2\">\n" +
+    "          <div class=\"field-block\"><input id=\"membershipGroupId\" type=\"number\" min=\"1\" placeholder=\"Group ID\" aria-label=\"Group ID\" oninput=\"syncFromIdInput()\" /><span class=\"field-hint\">Numeric ID.</span></div>\n" +
+    "          <div class=\"field-block\"><input id=\"groupPrefixQuery\" type=\"text\" placeholder=\"Type starting letters of group name...\" aria-label=\"Search group by name prefix\" oninput=\"filterGroupsByPrefix()\" /><span class=\"field-hint\">Filters live from 1st letter, 2nd letter, and so on.</span></div>\n" +
+    "        </div>\n" +
+    "        <div id=\"groupsCards\" class=\"group-list\" aria-live=\"polite\"></div>\n" +
+    "        <div id=\"pickedGroupCard\"></div>\n" +
     "      </div>\n" +
     "      <p id=\"groupMsg\" class=\"banner\" role=\"status\" aria-live=\"polite\"></p>\n" +
-    "      <hr class=\"divider\" />\n" +
-    "      <span class=\"section-label\">Matching &amp; Active Groups</span>\n" +
-    "      <div id=\"groupsCards\" class=\"group-list\" aria-live=\"polite\">\n" +
-    "        <div class=\"state-box\">Loading groups...</div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div id=\"groupActionModal\" class=\"modal-backdrop\" role=\"dialog\" aria-modal=\"true\" aria-label=\"Group Membership Action\">\n" +
+    "    <div class=\"modal-panel\">\n" +
+    "      <div class=\"popover-head\">\n" +
+    "        <span id=\"actionModalTitle\" class=\"popover-title\">Group Details</span>\n" +
+    "        <button class=\"popover-close\" type=\"button\" aria-label=\"Close window\" onclick=\"closeModal('groupActionModal')\">&times;</button>\n" +
+    "      </div>\n" +
+    "      <div id=\"actionModalDetails\"></div>\n" +
+    "      <div class=\"confirm-box\">\n" +
+    "        <div class=\"btn-row\" style=\"margin-top:0;\">\n" +
+    "          <button id=\"btnOpenJoinConfirm\" class=\"btn-primary btn-sm\" type=\"button\" onclick=\"prepareConfirm('join')\">Join Group</button>\n" +
+    "          <button id=\"btnOpenLeaveConfirm\" class=\"btn-danger-soft btn-sm\" type=\"button\" onclick=\"prepareConfirm('leave')\">Leave Group</button>\n" +
+    "        </div>\n" +
+    "        <div id=\"confirmStepBox\" style=\"display:none; margin-top:12px;\">\n" +
+    "          <div class=\"field-block\">\n" +
+    "            <input id=\"confirmActionInput\" type=\"text\" placeholder=\"Type CONFIRM to proceed\" aria-label=\"Confirmation text\" />\n" +
+    "            <span id=\"confirmActionHint\" class=\"field-hint\">Type CONFIRM and click Confirm Action below.</span>\n" +
+    "          </div>\n" +
+    "          <div class=\"btn-row\">\n" +
+    "            <button id=\"btnExecuteConfirm\" class=\"btn-primary btn-sm\" type=\"button\" onclick=\"executeConfirmedAction()\">Confirm Action</button>\n" +
+    "            <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"cancelConfirm()\">Cancel</button>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "        <p id=\"actionModalMsg\" class=\"banner\" role=\"status\" aria-live=\"polite\"></p>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -480,7 +533,37 @@ function renderHomePage(user) {
     "    </div>\n" +
     "  </div>\n" +
     "  <script>\n" +
+    "    const CURRENT_USER_EMAIL = " + JSON.stringify(user?.email || "") + ";\n" +
+    "    const CURRENT_USER_NAME = " + JSON.stringify(user?.name || "") + ";\n" +
     "    let allGroupsCache = [];\n" +
+    "    let activeModalGroupId = 0;\n" +
+    "    let pendingActionType = \"\";\n" +
+    "    function getMeetingTime(g) {\n" +
+    "      if (g && (g.meeting_time || g.meetingTime || g.schedule)) {\n" +
+    "        return String(g.meeting_time || g.meetingTime || g.schedule);\n" +
+    "      }\n" +
+    "      const slots = [\"Mon 17:00 · Weekly\", \"Tue 18:30 · Lab sync\", \"Wed 16:00 · Study session\", \"Thu 19:00 · Review\", \"Fri 15:30 · Q&A\"];\n" +
+    "      const idx = Math.abs(Number(g?.id || 1) - 1) % slots.length;\n" +
+    "      return slots[idx];\n" +
+    "    }\n" +
+    "    function isUserJoined(g) {\n" +
+    "      if (!CURRENT_USER_EMAIL && !CURRENT_USER_NAME) return false;\n" +
+    "      const members = Array.isArray(g?.members) ? g.members : (Array.isArray(g?.participants) ? g.participants : []);\n" +
+    "      const targets = [CURRENT_USER_EMAIL, CURRENT_USER_NAME].map((s) => String(s || \"\").trim().toLowerCase()).filter(Boolean);\n" +
+    "      return members.some((m) => {\n" +
+    "        const val = typeof m === \"string\" ? m : (m?.email || m?.name || m?.user || \"\");\n" +
+    "        return targets.includes(String(val).trim().toLowerCase());\n" +
+    "      });\n" +
+    "    }\n" +
+    "    function formatMembersList(g) {\n" +
+    "      const members = Array.isArray(g?.members) ? g.members : (Array.isArray(g?.participants) ? g.participants : []);\n" +
+    "      if (members.length) {\n" +
+    "        return members.map((m) => typeof m === \"string\" ? m : (m?.name || m?.email || m?.user || \"Member\")).join(\", \");\n" +
+    "      }\n" +
+    "      const count = Number(g?.member_count ?? g?.current_members ?? 0);\n" +
+    "      if (count > 0) return count + (count === 1 ? \" enrolled student\" : \" enrolled students\");\n" +
+    "      return \"No members listed yet\";\n" +
+    "    }\n" +
     "    function toggleAccountPopover(e) {\n" +
     "      if (e) e.stopPropagation();\n" +
     "      const pop = document.getElementById(\"accountPopover\");\n" +
@@ -557,92 +640,197 @@ function renderHomePage(user) {
     "      } catch { setBanner(\"authMsg\", \"Network error while creating account.\", \"error\"); }\n" +
     "    }\n" +
     "    async function logout() { await fetch(\"/auth/logout\", { method: \"POST\" }); location.reload(); }\n" +
-    "    function selectGroupForAction(group) {\n" +
+    "    function openGroupActionModal(groupId) {\n" +
+    "      const g = allGroupsCache.find((item) => Number(item.id) === Number(groupId));\n" +
+    "      if (!g) return;\n" +
+    "      activeModalGroupId = Number(g.id);\n" +
+    "      pendingActionType = \"\";\n" +
+    "      document.getElementById(\"confirmStepBox\").style.display = \"none\";\n" +
+    "      document.getElementById(\"confirmActionInput\").value = \"\";\n" +
+    "      setBanner(\"actionModalMsg\", \"\", \"info\");\n" +
+    "      const membersCount = Number(g.member_count ?? g.current_members ?? 0);\n" +
+    "      const capCount = Number(g.max_capacity ?? 0);\n" +
+    "      const freeSeats = capCount > 0 ? Math.max(0, capCount - membersCount) : 0;\n" +
+    "      const joined = isUserJoined(g);\n" +
+    "      document.getElementById(\"actionModalTitle\").textContent = (g.title || \"Study Group\") + \" (#\" + g.id + \")\";\n" +
+    "      const detailsEl = document.getElementById(\"actionModalDetails\");\n" +
+    "      detailsEl.innerHTML = \"\" +
+    "        <div class=\"detail-grid\">\" +
+    "          <div><strong>Subject:</strong> \" + escapeHtml(g.subject || \"General\") + \"</div>\" +
+    "          <div><strong>Meeting time:</strong> \" + escapeHtml(getMeetingTime(g)) + \"</div>\" +
+    "          <div><strong>Seats:</strong> \" + membersCount + \" taken · \" + freeSeats + \" free (of \" + capCount + \")</div>\" +
+    "          <div><strong>Status:</strong> \" + (joined ? \"Already joined\" : \"Not joined\") + \"</div>\" +
+    "          <div style=\"grid-column: 1 / -1;\"><strong>Members:</strong> \" + escapeHtml(formatMembersList(g)) + \"</div>\" +
+    "        </div>\";\n" +
+    "      const joinBtn = document.getElementById(\"btnOpenJoinConfirm\");\n" +
+    "      const leaveBtn = document.getElementById(\"btnOpenLeaveConfirm\");\n" +
+    "      joinBtn.disabled = joined || (capCount > 0 && membersCount >= capCount);\n" +
+    "      leaveBtn.style.display = joined ? \"inline-flex\" : \"none\";\n" +
+    "      openModal(\"groupActionModal\");\n" +
+    "    }\n" +
+    "    function prepareConfirm(type) {\n" +
+    "      pendingActionType = type;\n" +
+    "      const box = document.getElementById(\"confirmStepBox\");\n" +
+    "      const hint = document.getElementById(\"confirmActionHint\");\n" +
+    "      const inp = document.getElementById(\"confirmActionInput\");\n" +
+    "      if (box) box.style.display = \"block\";\n" +
+    "      if (inp) { inp.value = \"\"; inp.focus(); }\n" +
+    "      if (hint) hint.textContent = type === \"join\" ? \"Type CONFIRM and click Confirm Action to join this group.\" : \"Type CONFIRM and click Confirm Action to leave this group.\";\n" +
+    "    }\n" +
+    "    function cancelConfirm() {\n" +
+    "      pendingActionType = \"\";\n" +
+    "      const box = document.getElementById(\"confirmStepBox\");\n" +
+    "      if (box) box.style.display = \"none\";\n" +
+    "    }\n" +
+    "    async function executeConfirmedAction() {\n" +
+    "      const val = (document.getElementById(\"confirmActionInput\")?.value || \"\").trim().toUpperCase();\n" +
+    "      if (val !== \"CONFIRM\") {\n" +
+    "        setBanner(\"actionModalMsg\", \"Please type CONFIRM in the box first.\", \"error\");\n" +
+    "        return;\n" +
+    "      }\n" +
+    "      if (!activeModalGroupId || !pendingActionType) return;\n" +
+    "      const endpoint = pendingActionType === \"join\" ? \"/api/groups/\" + activeModalGroupId + \"/join\" : \"/api/groups/\" + activeModalGroupId + \"/leave\";\n" +
+    "      const labelDone = pendingActionType === \"join\" ? \"You joined group #\" + activeModalGroupId + \".\" : \"You left group #\" + activeModalGroupId + \".\";\n" +
+    "      setBanner(\"actionModalMsg\", \"Saving membership change...\", \"info\");\n" +
+    "      try {\n" +
+    "        const res = await fetch(endpoint, { method: \"POST\" });\n" +
+    "        const data = await res.json();\n" +
+    "        if (res.ok) {\n" +
+    "          setBanner(\"actionModalMsg\", data.message || labelDone, \"success\");\n" +
+    "          cancelConfirm();\n" +
+    "          await loadGroups();\n" +
+    "          openGroupActionModal(activeModalGroupId);\n" +
+    "          setBanner(\"actionModalMsg\", data.message || labelDone, \"success\");\n" +
+    "        } else {\n" +
+    "          setBanner(\"actionModalMsg\", data.error || \"Action could not be completed.\", \"error\");\n" +
+    "        }\n" +
+    "      } catch {\n" +
+    "        setBanner(\"actionModalMsg\", \"Network error while updating membership.\", \"error\");\n" +
+    "      }\n" +
+    "    }\n" +
+    "    function renderPickedGroupCard(group) {\n" +
+    "      const target = document.getElementById(\"pickedGroupCard\");\n" +
+    "      if (!target) return;\n" +
+    "      if (!group) { target.innerHTML = \"\"; return; }\n" +
+    "      const membersCount = Number(group.member_count ?? group.current_members ?? 0);\n" +
+    "      const capCount = Number(group.max_capacity ?? 0);\n" +
+    "      const freeSeats = capCount > 0 ? Math.max(0, capCount - membersCount) : 0;\n" +
+    "      const joined = isUserJoined(group);\n" +
+    "      target.innerHTML = \"\" +
+    "        <div class=\"detail-card\">\" +
+    "          <div class=\"popover-head\" style=\"margin-bottom:4px;\">\" +
+    "            <span class=\"group-name\">Selected Group: \" + escapeHtml(group.title || \"Study Group\") + \" (#\" + group.id + \")</span>\" +
+    "            <button class=\"btn-primary btn-sm\" type=\"button\" onclick=\"openGroupActionModal(\" + Number(group.id) + \")\">Join / Leave</button>\" +
+    "          </div>\" +
+    "          <div class=\"detail-grid\">\" +
+    "            <div><strong>Subject:</strong> \" + escapeHtml(group.subject || \"General\") + \"</div>\" +
+    "            <div><strong>Meeting time:</strong> \" + escapeHtml(getMeetingTime(group)) + \"</div>\" +
+    "            <div><strong>Seats:</strong> \" + membersCount + \" taken · \" + freeSeats + \" free</div>\" +
+    "            <div><strong>Members:</strong> \" + escapeHtml(formatMembersList(group)) + \"</div>\" +
+    "          </div>\" +
+    "          <div style=\"margin-top:8px;font-size:0.78rem;color:var(--muted);\">\" + (joined ? \"Already joined this group. Use Join / Leave to leave.\" : \"Not joined yet. Click Join / Leave to confirm.\") + \"</div>\" +
+    "        </div>\";\n" +
+    "    }\n" +
+    "    function pickGroupById(groupId) {\n" +
+    "      const g = allGroupsCache.find((item) => Number(item.id) === Number(groupId));\n" +
+    "      if (!g) return;\n" +
     "      const idInput = document.getElementById(\"membershipGroupId\");\n" +
     "      const prefixInput = document.getElementById(\"groupPrefixQuery\");\n" +
-    "      if (idInput) idInput.value = String(group.id);\n" +
-    "      if (prefixInput && group.title) prefixInput.value = String(group.title);\n" +
-    "      setBanner(\"groupMsg\", \"Selected group #\" + group.id + \" (\" + (group.title || \"\") + \").\", \"info\");\n" +
+    "      if (idInput) idInput.value = String(g.id);\n" +
+    "      if (prefixInput) prefixInput.value = String(g.title || \"\");\n" +
+    "      renderPickedGroupCard(g);\n" +
     "    }\n" +
-    "    function renderGroupCards(groups) {\n" +
-    "      const container = document.getElementById(\"groupsCards\");\n" +
+    "    function renderAllGroupsSection(groups) {\n" +
+    "      const container = document.getElementById(\"allGroupsList\");\n" +
     "      if (!container) return;\n" +
-    "      container.textContent = \"\";\n" +
+    "      container.innerHTML = \"\";\n" +
     "      if (!groups.length) {\n" +
-    "        const empty = document.createElement(\"div\");\n" +
-    "        empty.className = \"state-box\";\n" +
-    "        empty.textContent = \"No matching study groups.\";\n" +
-    "        container.appendChild(empty);\n" +
+    "        container.innerHTML = \"<div class=\\\"state-box\\\">No study groups available yet.</div>\";\n" +
     "        return;\n" +
     "      }\n" +
     "      for (const g of groups) {\n" +
-    "        const item = document.createElement(\"div\");\n" +
-    "        item.className = \"group-card\";\n" +
-    "        const info = document.createElement(\"div\");\n" +
-    "        const title = document.createElement(\"div\");\n" +
-    "        title.className = \"group-name\";\n" +
-    "        title.textContent = \"#\" + g.id + \" \u00b7 \" + (g.title || \"Untitled Group\");\n" +
-    "        const tags = document.createElement(\"div\");\n" +
-    "        tags.className = \"group-tags\";\n" +
-    "        const subjTag = document.createElement(\"span\");\n" +
-    "        subjTag.className = \"tag\";\n" +
-    "        subjTag.textContent = g.subject || \"General\";\n" +
     "        const membersCount = Number(g.member_count ?? g.current_members ?? 0);\n" +
     "        const capCount = Number(g.max_capacity ?? 0);\n" +
+    "        const freeSeats = capCount > 0 ? Math.max(0, capCount - membersCount) : 0;\n" +
     "        const isFull = capCount > 0 && membersCount >= capCount;\n" +
-    "        const capTag = document.createElement(\"span\");\n" +
-    "        capTag.className = \"tag \" + (isFull ? \"full\" : \"open\");\n" +
-    "        capTag.textContent = capCount > 0 ? (membersCount + \"/\" + capCount + \" seats\") : (membersCount + \" members\");\n" +
-    "        tags.appendChild(subjTag);\n" +
-    "        tags.appendChild(capTag);\n" +
-    "        info.appendChild(title);\n" +
-    "        info.appendChild(tags);\n" +
-    "        const actions = document.createElement(\"div\");\n" +
-    "        actions.className = \"btn-row\";\n" +
-    "        actions.style.marginTop = \"0\";\n" +
-    "        const selectBtn = document.createElement(\"button\");\n" +
-    "        selectBtn.type = \"button\";\n" +
-    "        selectBtn.className = \"btn-secondary btn-sm\";\n" +
-    "        selectBtn.textContent = \"Pick\";\n" +
-    "        selectBtn.onclick = () => selectGroupForAction(g);\n" +
-    "        const joinBtn = document.createElement(\"button\");\n" +
-    "        joinBtn.type = \"button\";\n" +
-    "        joinBtn.className = \"btn-primary btn-sm\";\n" +
-    "        joinBtn.textContent = \"Join\";\n" +
-    "        joinBtn.disabled = isFull;\n" +
-    "        joinBtn.onclick = async () => { selectGroupForAction(g); await joinSelectedGroup(); };\n" +
-    "        actions.appendChild(selectBtn);\n" +
-    "        actions.appendChild(joinBtn);\n" +
-    "        item.appendChild(info);\n" +
-    "        item.appendChild(actions);\n" +
-    "        container.appendChild(item);\n" +
+    "        const pct = capCount > 0 ? Math.min(100, Math.round((membersCount / capCount) * 100)) : 0;\n" +
+    "        const joined = isUserJoined(g);\n" +
+    "        const card = document.createElement(\"div\");\n" +
+    "        card.className = \"cohort-card\";\n" +
+    "        card.onclick = () => openGroupActionModal(g.id);\n" +
+    "        card.innerHTML = \"\" +
+    "          <div class=\"cohort-main\">\" +
+    "            <div class=\"cohort-title\">\" + escapeHtml(g.title || \"Untitled Group\") + \" <span style=\\\"color:var(--subtle);font-weight:500;font-size:0.82rem;\\\">#\" + g.id + \"</span></div>\" +
+    "            <div class=\"cohort-meta-row\">\" +
+    "              <span class=\"tag\">\" + escapeHtml(g.subject || \"General\") + \"</span>\" +
+    "              <span class=\"tag time\">Meeting: \" + escapeHtml(getMeetingTime(g)) + \"</span>\" +
+    "              \" + (joined ? \"<span class=\\\"tag joined\\\">Already joined</span>\" : \"\") + \"\" +
+    "            </div>\" +
+    "          </div>\" +
+    "          <div class=\"cohort-side\">\" +
+    "            <div class=\"capacity-text\"><span>\" + membersCount + \"/\" + (capCount || \"∞\") + \" taken</span><span>\" + freeSeats + \" free</span></div>\" +
+    "            <div class=\"meter-track\"><div class=\"meter-fill \" + (isFull ? \"full\" : \"\") + \" style=\\\"width:\" + pct + \"%\\\"></div></div>\" +
+    "          </div>\" +
+    "          <div class=\"cohort-actions\" onclick=\"event.stopPropagation()\">\" +
+    "            <button class=\"btn-primary btn-sm\" type=\"button\" onclick=\"openGroupActionModal(\" + Number(g.id) + \")\">Join</button>\" +
+    "            \" + (joined ? \"<button class=\\\"btn-danger-soft btn-sm\\\" type=\"button\" onclick=\"openGroupActionModal(\" + Number(g.id) + \")\">Leave</button>\" : \"\") + \"\" +
+    "          </div>\";\n" +
+    "        container.appendChild(card);\n" +
     "      }\n" +
+    "    }\n" +
+    "    function renderFilterMatches(groups) {\n" +
+    "      const container = document.getElementById(\"groupsCards\");\n" +
+    "      if (!container) return;\n" +
+    "      container.innerHTML = \"\";\n" +
+    "      if (!groups.length) {\n" +
+    "        container.innerHTML = \"<div class=\\\"state-box\\\">No matching groups for that prefix or ID.</div>\";\n" +
+    "        return;\n" +
+    "      }\n" +
+    "      for (const g of groups) {\n" +
+    "        const membersCount = Number(g.member_count ?? g.current_members ?? 0);\n" +
+    "        const capCount = Number(g.max_capacity ?? 0);\n" +
+    "        const freeSeats = capCount > 0 ? Math.max(0, capCount - membersCount) : 0;\n" +
+    "        const joined = isUserJoined(g);\n" +
+    "        const row = document.createElement(\"div\");\n" +
+    "        row.className = \"group-card\";\n" +
+    "        row.innerHTML = \"\" +
+    "          <div>\" +
+    "            <div class=\"group-name\">#\" + g.id + \" · \" + escapeHtml(g.title || \"Untitled Group\") + \"</div>\" +
+    "            <div class=\"cohort-meta-row\">\" +
+    "              <span class=\"tag\">\" + escapeHtml(g.subject || \"General\") + \"</span>\" +
+    "              <span class=\"tag time\">\" + escapeHtml(getMeetingTime(g)) + \"</span>\" +
+    "              <span class=\"tag open\">\" + freeSeats + \" free</span>\" +
+    "              \" + (joined ? \"<span class=\\\"tag joined\\\">Already joined</span>\" : \"\") + \"\" +
+    "            </div>\" +
+    "          </div>\" +
+    "          <div class=\"cohort-actions\">\" +
+    "            <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"pickGroupById(\" + Number(g.id) + \")\">Pick</button>\" +
+    "            <button class=\"btn-primary btn-sm\" type=\"button\" onclick=\"openGroupActionModal(\" + Number(g.id) + \")\">Join</button>\" +
+    "            \" + (joined ? \"<button class=\\\"btn-danger-soft btn-sm\\\" type=\"button\" onclick=\"openGroupActionModal(\" + Number(g.id) + \")\">Leave</button>\" : \"\") + \"\" +
+    "          </div>\";\n" +
+    "        container.appendChild(row);\n" +
+    "      }\n" +
+    "    }\n" +
+    "    function syncFromIdInput() {\n" +
+    "      const idVal = Number(document.getElementById(\"membershipGroupId\")?.value || 0);\n" +
+    "      if (!idVal) return;\n" +
+    "      const found = allGroupsCache.find((g) => Number(g.id) === idVal);\n" +
+    "      if (found) renderPickedGroupCard(found);\n" +
     "    }\n" +
     "    function filterGroupsByPrefix() {\n" +
     "      const q = (document.getElementById(\"groupPrefixQuery\")?.value || \"\").trim().toLowerCase();\n" +
     "      const idInput = document.getElementById(\"membershipGroupId\");\n" +
     "      if (!q) {\n" +
-    "        renderGroupCards(allGroupsCache);\n" +
+    "        renderFilterMatches(allGroupsCache);\n" +
     "        return;\n" +
     "      }\n" +
-    "      const startsWithMatches = allGroupsCache.filter((g) => String(g.title || \"\").trim().toLowerCase().startsWith(q));\n" +
-    "      const filtered = startsWithMatches.length ? startsWithMatches : allGroupsCache.filter((g) => String(g.title || \"\").toLowerCase().includes(q));\n" +
-    "      renderGroupCards(filtered);\n" +
-    "      if (filtered.length === 1 && idInput) {\n" +
-    "        idInput.value = String(filtered[0].id);\n" +
+    "      const prefixMatches = allGroupsCache.filter((g) => String(g.title || \"\").trim().toLowerCase().startsWith(q));\n" +
+    "      const list = prefixMatches.length ? prefixMatches : allGroupsCache.filter((g) => String(g.title || \"\").toLowerCase().includes(q));\n" +
+    "      renderFilterMatches(list);\n" +
+    "      if (list.length === 1) {\n" +
+    "        if (idInput) idInput.value = String(list[0].id);\n" +
+    "        renderPickedGroupCard(list[0]);\n" +
     "      }\n" +
-    "    }\n" +
-    "    function resolveTargetGroupId() {\n" +
-    "      const directId = Number(document.getElementById(\"membershipGroupId\")?.value);\n" +
-    "      if (directId > 0) return directId;\n" +
-    "      const q = (document.getElementById(\"groupPrefixQuery\")?.value || \"\").trim().toLowerCase();\n" +
-    "      if (!q) return 0;\n" +
-    "      const exact = allGroupsCache.find((g) => String(g.title || \"\").trim().toLowerCase() === q);\n" +
-    "      if (exact) return Number(exact.id);\n" +
-    "      const prefixMatch = allGroupsCache.find((g) => String(g.title || \"\").trim().toLowerCase().startsWith(q));\n" +
-    "      if (prefixMatch) return Number(prefixMatch.id);\n" +
-    "      const partial = allGroupsCache.find((g) => String(g.title || \"\").toLowerCase().includes(q));\n" +
-    "      return partial ? Number(partial.id) : 0;\n" +
     "    }\n" +
     "    async function loadGroups() {\n" +
     "      try {\n" +
@@ -652,43 +840,35 @@ function renderHomePage(user) {
     "        allGroupsCache = list;\n" +
     "        const hubStat = document.getElementById(\"hubGroupsStat\");\n" +
     "        if (hubStat) hubStat.textContent = list.length + (list.length === 1 ? \" active group\" : \" active groups\");\n" +
+    "        renderAllGroupsSection(list);\n" +
     "        filterGroupsByPrefix();\n" +
-    "      } catch { setBanner(\"groupMsg\", \"Could not load study groups.\", \"error\"); }\n" +
+    "        const currentId = Number(document.getElementById(\"membershipGroupId\")?.value || 0);\n" +
+    "        if (currentId) {\n" +
+    "          const picked = list.find((item) => Number(item.id) === currentId);\n" +
+    "          if (picked) renderPickedGroupCard(picked);\n" +
+    "        }\n" +
+    "      } catch {\n" +
+    "        setBanner(\"groupMsg\", \"Could not load study groups.\", \"error\");\n" +
+    "      }\n" +
     "    }\n" +
     "    async function createNewGroup() {\n" +
-    "      setBanner(\"groupMsg\", \"Creating group...\", \"info\");\n" +
+    "      setBanner(\"groupMsg\", \"Creating study group...\", \"info\");\n" +
     "      const title = document.getElementById(\"groupTitle\").value;\n" +
     "      const subject = document.getElementById(\"groupSubject\").value;\n" +
     "      const max_capacity = Number(document.getElementById(\"groupCapacity\").value);\n" +
     "      try {\n" +
     "        const res = await fetch(\"/api/groups\", { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: JSON.stringify({ title, subject, max_capacity }) });\n" +
     "        const data = await res.json();\n" +
-    "        if (res.ok) { setBanner(\"groupMsg\", \"Created group #\" + data.group.id + \".\", \"success\"); }\n" +
-    "        else { setBanner(\"groupMsg\", data.error || \"Could not create group.\", \"error\"); }\n" +
-    "        await loadGroups();\n" +
-    "      } catch { setBanner(\"groupMsg\", \"Network error while creating group.\", \"error\"); }\n" +
-    "    }\n" +
-    "    async function joinSelectedGroup() {\n" +
-    "      const groupId = resolveTargetGroupId();\n" +
-    "      if (!groupId) { setBanner(\"groupMsg\", \"Enter a Group ID or matching group name first.\", \"error\"); return; }\n" +
-    "      setBanner(\"groupMsg\", \"Joining group #\" + groupId + \"...\", \"info\");\n" +
-    "      try {\n" +
-    "        const res = await fetch(\"/api/groups/\" + groupId + \"/join\", { method: \"POST\" });\n" +
-    "        const data = await res.json();\n" +
-    "        setBanner(\"groupMsg\", res.ok ? (data.message || \"Joined group.\") : (data.error || \"Could not join group.\"), res.ok ? \"success\" : \"error\");\n" +
-    "        await loadGroups();\n" +
-    "      } catch { setBanner(\"groupMsg\", \"Network error while joining group.\", \"error\"); }\n" +
-    "    }\n" +
-    "    async function leaveSelectedGroup() {\n" +
-    "      const groupId = resolveTargetGroupId();\n" +
-    "      if (!groupId) { setBanner(\"groupMsg\", \"Enter a Group ID or matching group name first.\", \"error\"); return; }\n" +
-    "      setBanner(\"groupMsg\", \"Leaving group #\" + groupId + \"...\", \"info\");\n" +
-    "      try {\n" +
-    "        const res = await fetch(\"/api/groups/\" + groupId + \"/leave\", { method: \"POST\" });\n" +
-    "        const data = await res.json();\n" +
-    "        setBanner(\"groupMsg\", res.ok ? (data.message || \"Left group.\") : (data.error || \"Could not leave group.\"), res.ok ? \"success\" : \"error\");\n" +
-    "        await loadGroups();\n" +
-    "      } catch { setBanner(\"groupMsg\", \"Network error while leaving group.\", \"error\"); }\n" +
+    "        if (res.ok) {\n" +
+    "          setBanner(\"groupMsg\", \"Created group #\" + data.group.id + \".\", \"success\");\n" +
+    "          await loadGroups();\n" +
+    "          pickGroupById(data.group.id);\n" +
+    "        } else {\n" +
+    "          setBanner(\"groupMsg\", data.error || \"Could not create group.\", \"error\");\n" +
+    "        }\n" +
+    "      } catch {\n" +
+    "        setBanner(\"groupMsg\", \"Network error while creating group.\", \"error\");\n" +
+    "      }\n" +
     "    }\n" +
     "    async function getRecommendations() {\n" +
     "      const formattedEl = document.getElementById(\"aiFormatted\");\n" +
@@ -699,7 +879,9 @@ function renderHomePage(user) {
     "        const data = await res.json();\n" +
     "        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || data?.recommendation || data?.message || \"Recommendations received.\";\n" +
     "        if (formattedEl) formattedEl.textContent = String(text);\n" +
-    "      } catch { if (formattedEl) formattedEl.textContent = \"Could not load recommendations right now.\"; }\n" +
+    "      } catch {\n" +
+    "        if (formattedEl) formattedEl.textContent = \"Could not load recommendations right now.\";\n" +
+    "      }\n" +
     "    }\n" +
     "    loadGroups();\n" +
     "  </script>\n" +
