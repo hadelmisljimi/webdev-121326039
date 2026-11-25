@@ -227,39 +227,113 @@ function escapeHtml(val) {
 }
 
 function renderHomePage(user) {
-  const css = "\n    :root { --bg: #f3f6fb; --surface: #ffffff; --surface-alt: #f8fafc; --text: #0f172a; --muted: #475569; --subtle: #64748b; --border: #e2e8f0; --border-strong: #cbd5e1; --primary: #2563eb; --primary-hover: #1d4ed8; --primary-soft: #eff6ff; --success-bg: #ecfdf5; --success-text: #065f46; --success-border: #a7f3d0; --error-bg: #fef2f2; --error-text: #991b1b; --error-border: #fecaca; --warn-bg: #fffbeb; --warn-text: #92400e; --radius: 14px; --radius-sm: 10px; --shadow: 0 12px 28px -14px rgba(15, 23, 42, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.05); --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05); }\n    * { box-sizing: border-box; }\n    html { scroll-behavior: smooth; }\n    body { margin: 0; font-family: \"Inter\", system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif; background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 240px, var(--bg) 100%); color: var(--text); line-height: 1.5; min-height: 100vh; }\n    :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }\n    .topbar { position: sticky; top: 0; z-index: 30; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }\n    .topbar-inner { max-width: 1160px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }\n    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }\n    .brand-mark { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #4338ca); color: #ffffff; font-weight: 700; font-size: 0.92rem; display: grid; place-items: center; box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25); flex-shrink: 0; }\n    .brand-title { font-weight: 700; font-size: 1.02rem; letter-spacing: -0.015em; display: block; }\n    .brand-sub { font-size: 0.76rem; color: var(--subtle); display: block; }\n    .nav-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }\n    .nav-link { text-decoration: none; color: var(--muted); font-size: 0.86rem; font-weight: 500; padding: 7px 12px; border-radius: 8px; white-space: nowrap; transition: background 0.15s ease, color 0.15s ease; }\n    .nav-link:hover { background: var(--surface-alt); color: var(--text); }\n    .session-pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text); white-space: nowrap; }\n    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; flex-shrink: 0; }\n    .status-dot.active { background: #10b981; }\n    .container { max-width: 1160px; margin: 0 auto; padding: 28px 24px 64px; }\n    .page-header { margin-bottom: 22px; }\n    .page-header h1 { margin: 0 0 6px; font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -0.025em; color: var(--text); }\n    .page-header p { margin: 0; color: var(--muted); font-size: 0.95rem; }\n    .metrics-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 24px; }\n    .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow-sm); }\n    .metric-label { font-size: 0.74rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--subtle); }\n    .metric-value { font-size: 1.5rem; font-weight: 700; margin-top: 6px; letter-spacing: -0.02em; color: var(--text); }\n    .metric-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n    .workspace-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 22px; align-items: start; }\n    .column-stack { display: flex; flex-direction: column; gap: 20px; }\n    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); }\n    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 16px; }\n    .card-title { margin: 0; font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; }\n    .card-desc { margin: 3px 0 0; font-size: 0.85rem; color: var(--muted); }\n    .section-label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }\n    .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }\n    .form-grid-auth { display: grid; grid-template-columns: 1fr; gap: 10px; }\n    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }\n    input { width: 100%; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font-family: inherit; font-size: 0.9rem; transition: border-color 0.15s ease, box-shadow 0.15s ease; }\n    input:hover { border-color: #94a3b8; }\n    input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14); outline: none; }\n    button, .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 15px; border-radius: var(--radius-sm); border: 1px solid transparent; font-family: inherit; font-size: 0.88rem; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: none; transition: background 0.15s ease, border-color 0.15s ease, transform 0.08s ease; }\n    button:active, .btn:active { transform: translateY(1px); }\n    button:disabled { opacity: 0.5; cursor: not-allowed; }\n    .btn-primary { background: var(--primary); color: #ffffff; box-shadow: 0 3px 10px rgba(37, 99, 235, 0.22); }\n    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }\n    .btn-secondary { background: var(--surface); color: var(--text); border-color: var(--border-strong); }\n    .btn-secondary:hover:not(:disabled) { background: var(--surface-alt); border-color: #94a3b8; }\n    .btn-soft { background: var(--primary-soft); color: var(--primary); }\n    .btn-soft:hover:not(:disabled) { background: #dbeafe; }\n    .btn-sm { padding: 6px 11px; font-size: 0.8rem; border-radius: 8px; }\n    .divider { margin: 18px 0; border: none; border-top: 1px solid var(--border); }\n    .banner { margin-top: 12px; padding: 10px 13px; border-radius: var(--radius-sm); font-size: 0.86rem; font-weight: 500; display: none; }\n    .banner.show { display: block; }\n    .banner.info { background: var(--primary-soft); color: #1e40af; border: 1px solid #bfdbfe; }\n    .banner.success { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }\n    .banner.error { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border); }\n    .group-list { display: grid; gap: 10px; margin-top: 14px; }\n    .group-card { border: 1px solid var(--border); background: var(--surface-alt); border-radius: var(--radius-sm); padding: 13px 15px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }\n    .group-card:hover { border-color: var(--border-strong); background: #ffffff; }\n    .group-name { font-weight: 600; font-size: 0.95rem; color: var(--text); }\n    .group-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; align-items: center; }\n    .tag { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; background: #e2e8f0; color: #334155; }\n    .tag.open { background: var(--success-bg); color: var(--success-text); }\n    .tag.full { background: var(--warn-bg); color: var(--warn-text); }\n    .state-box { text-align: center; padding: 24px 16px; border: 1px dashed var(--border-strong); border-radius: var(--radius-sm); background: var(--surface-alt); color: var(--muted); font-size: 0.9rem; margin-top: 12px; }\n    .profile-box { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--surface-alt); border: 1px solid var(--border); }\n    .profile-email { font-weight: 600; font-size: 0.92rem; color: var(--text); }\n    .profile-meta { font-size: 0.8rem; color: var(--muted); }\n    .ai-result { margin-top: 14px; padding: 13px 14px; border-radius: var(--radius-sm); background: var(--surface-alt); border: 1px solid var(--border); font-size: 0.88rem; color: var(--text); white-space: pre-wrap; }\n    pre { background: #0f172a; color: #e2e8f0; padding: 12px 14px; border-radius: var(--radius-sm); overflow-x: auto; font-size: 0.78rem; margin-top: 8px; }\n    details summary { cursor: pointer; font-size: 0.8rem; color: var(--subtle); margin-top: 12px; user-select: none; }\n    @media (max-width: 960px) { .workspace-grid { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }\n    @media (max-width: 640px) { .metrics-grid { grid-template-columns: 1fr; } .container { padding: 20px 16px 48px; } .card { padding: 18px; } }\n";
+  const css = "\n" +
+    "    :root { --bg: #f3f6fb; --surface: #ffffff; --surface-alt: #f8fafc; --text: #0f172a; --muted: #475569; --subtle: #64748b; --border: #e2e8f0; --border-strong: #cbd5e1; --primary: #2563eb; --primary-hover: #1d4ed8; --primary-soft: #eff6ff; --success-bg: #ecfdf5; --success-text: #065f46; --success-border: #a7f3d0; --error-bg: #fef2f2; --error-text: #991b1b; --error-border: #fecaca; --warn-bg: #fffbeb; --warn-text: #92400e; --radius: 14px; --radius-sm: 10px; --shadow: 0 12px 28px -14px rgba(15, 23, 42, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.05); --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05); }\n" +
+    "    * { box-sizing: border-box; }\n" +
+    "    html { scroll-behavior: smooth; }\n" +
+    "    body { margin: 0; font-family: \"Inter\", system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif; background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 240px, var(--bg) 100%); color: var(--text); line-height: 1.5; min-height: 100vh; }\n" +
+    "    :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }\n" +
+    "    .topbar { position: sticky; top: 0; z-index: 30; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }\n" +
+    "    .topbar-inner { max-width: 1160px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }\n" +
+    "    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }\n" +
+    "    .brand-mark { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #4338ca); color: #ffffff; font-weight: 700; font-size: 0.92rem; display: grid; place-items: center; box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25); flex-shrink: 0; }\n" +
+    "    .brand-title { font-weight: 700; font-size: 1.02rem; letter-spacing: -0.015em; display: block; }\n" +
+    "    .brand-sub { font-size: 0.76rem; color: var(--subtle); display: block; }\n" +
+    "    .nav-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; position: relative; }\n" +
+    "    .nav-link { text-decoration: none; color: var(--muted); font-size: 0.86rem; font-weight: 500; padding: 7px 12px; border-radius: 8px; white-space: nowrap; }\n" +
+    "    .nav-link:hover { background: var(--surface-alt); color: var(--text); }\n" +
+    "    .session-pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text); white-space: nowrap; }\n" +
+    "    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; flex-shrink: 0; }\n" +
+    "    .status-dot.active { background: #10b981; }\n" +
+    "    .account-icon-btn { width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }\n" +
+    "    .account-icon-btn:hover { background: var(--surface-alt); border-color: #94a3b8; }\n" +
+    "    .account-popover { display: none; position: absolute; right: 0; top: 46px; width: 320px; max-width: calc(100vw - 32px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; z-index: 50; }\n" +
+    "    .account-popover.open { display: block; }\n" +
+    "    .popover-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }\n" +
+    "    .popover-title { font-weight: 700; font-size: 0.94rem; color: var(--text); }\n" +
+    "    .popover-close { background: transparent; border: none; color: var(--subtle); font-size: 1.05rem; padding: 2px 6px; cursor: pointer; }\n" +
+    "    .popover-close:hover { color: var(--text); }\n" +
+    "    .container { max-width: 1160px; margin: 0 auto; padding: 28px 24px 64px; }\n" +
+    "    .page-header { margin-bottom: 22px; }\n" +
+    "    .page-header h1 { margin: 0 0 6px; font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -0.025em; color: var(--text); }\n" +
+    "    .page-header p { margin: 0; color: var(--muted); font-size: 0.95rem; }\n" +
+    "    .metrics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 24px; }\n" +
+    "    .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow-sm); }\n" +
+    "    .metric-label { font-size: 0.74rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--subtle); }\n" +
+    "    .metric-value { font-size: 1.5rem; font-weight: 700; margin-top: 6px; letter-spacing: -0.02em; color: var(--text); }\n" +
+    "    .metric-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }\n" +
+    "    .workspace-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 22px; align-items: start; }\n" +
+    "    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); }\n" +
+    "    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 16px; }\n" +
+    "    .card-title { margin: 0; font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; }\n" +
+    "    .card-desc { margin: 3px 0 0; font-size: 0.85rem; color: var(--muted); }\n" +
+    "    .section-label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }\n" +
+    "    .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }\n" +
+    "    .form-grid-auth { display: grid; grid-template-columns: 1fr; gap: 9px; }\n" +
+    "    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }\n" +
+    "    input { width: 100%; padding: 9px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font-family: inherit; font-size: 0.88rem; }\n" +
+    "    input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14); outline: none; }\n" +
+    "    button, .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 14px; border-radius: var(--radius-sm); border: 1px solid transparent; font-family: inherit; font-size: 0.86rem; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: none; }\n" +
+    "    button:disabled { opacity: 0.5; cursor: not-allowed; }\n" +
+    "    .btn-primary { background: var(--primary); color: #ffffff; }\n" +
+    "    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }\n" +
+    "    .btn-secondary { background: var(--surface); color: var(--text); border-color: var(--border-strong); }\n" +
+    "    .btn-secondary:hover:not(:disabled) { background: var(--surface-alt); }\n" +
+    "    .btn-soft { background: var(--primary-soft); color: var(--primary); }\n" +
+    "    .btn-soft:hover:not(:disabled) { background: #dbeafe; }\n" +
+    "    .btn-sm { padding: 6px 11px; font-size: 0.8rem; border-radius: 8px; }\n" +
+    "    .divider { margin: 14px 0; border: none; border-top: 1px solid var(--border); }\n" +
+    "    .banner { margin-top: 10px; padding: 9px 12px; border-radius: var(--radius-sm); font-size: 0.84rem; font-weight: 500; display: none; }\n" +
+    "    .banner.show { display: block; }\n" +
+    "    .banner.info { background: var(--primary-soft); color: #1e40af; border: 1px solid #bfdbfe; }\n" +
+    "    .banner.success { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }\n" +
+    "    .banner.error { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border); }\n" +
+    "    .group-list { display: grid; gap: 10px; margin-top: 14px; }\n" +
+    "    .group-card { border: 1px solid var(--border); background: var(--surface-alt); border-radius: var(--radius-sm); padding: 13px 15px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }\n" +
+    "    .group-name { font-weight: 600; font-size: 0.95rem; color: var(--text); }\n" +
+    "    .group-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; align-items: center; }\n" +
+    "    .tag { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; background: #e2e8f0; color: #334155; }\n" +
+    "    .tag.open { background: var(--success-bg); color: var(--success-text); }\n" +
+    "    .tag.full { background: var(--warn-bg); color: var(--warn-text); }\n" +
+    "    .state-box { text-align: center; padding: 24px 16px; border: 1px dashed var(--border-strong); border-radius: var(--radius-sm); background: var(--surface-alt); color: var(--muted); font-size: 0.9rem; margin-top: 12px; }\n" +
+    "    .profile-box { padding: 12px; border-radius: var(--radius-sm); background: var(--surface-alt); border: 1px solid var(--border); }\n" +
+    "    .profile-email { font-weight: 600; font-size: 0.9rem; color: var(--text); word-break: break-word; }\n" +
+    "    .profile-meta { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }\n" +
+    "    .ai-result { margin-top: 14px; padding: 13px 14px; border-radius: var(--radius-sm); background: var(--surface-alt); border: 1px solid var(--border); font-size: 0.88rem; color: var(--text); white-space: pre-wrap; }\n" +
+    "    pre { background: #0f172a; color: #e2e8f0; padding: 12px 14px; border-radius: var(--radius-sm); overflow-x: auto; font-size: 0.78rem; margin-top: 8px; }\n" +
+    "    details summary { cursor: pointer; font-size: 0.8rem; color: var(--subtle); margin-top: 12px; user-select: none; }\n" +
+    "    @media (max-width: 960px) { .workspace-grid { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }\n" +
+    "    @media (max-width: 640px) { .metrics-grid { grid-template-columns: 1fr; } .container { padding: 20px 16px 48px; } .card { padding: 18px; } }\n" +
+    "";
+
   const safeEmail = escapeHtml(user?.email || "");
   const safeName = escapeHtml(user?.name || "Student");
   const isAuth = Boolean(user);
 
   const sessionPillText = isAuth ? "Signed in: " + safeEmail : "Guest session";
   const dotClass = isAuth ? "status-dot active" : "status-dot";
-  const metricSessionTitle = isAuth ? safeName : "Not signed in";
-  const metricSessionSub = isAuth ? safeEmail : "Sign in to create or join";
 
-  const accountSectionHtml = user
-    ? '<div class="profile-box">' +
-        '<div>' +
-          '<div class="profile-email">' + safeEmail + '</div>' +
-          '<div class="profile-meta">' + safeName + ' · Active session</div>' +
-        '</div>' +
-        '<button class="btn-secondary btn-sm" type="button" onclick="logout()">Sign out</button>' +
-      '</div>'
-    : '<div class="btn-row" style="margin-top: 0;">' +
-        '<a class="btn btn-soft" href="/auth/google">Continue with Google</a>' +
-      '</div>' +
-      '<hr class="divider" />' +
-      '<span class="section-label">Email &amp; Password</span>' +
-      '<div class="form-grid-auth">' +
-        '<input id="authName" type="text" placeholder="Full name (for registration)" aria-label="Full name" />' +
-        '<input id="authEmail" type="email" placeholder="Email address" aria-label="Email address" />' +
-        '<input id="authPassword" type="password" placeholder="Password (min. 6 characters)" aria-label="Password" />' +
-      '</div>' +
-      '<div class="btn-row">' +
-        '<button class="btn-primary" type="button" onclick="loginUser()">Sign in</button>' +
-        '<button class="btn-secondary" type="button" onclick="registerUser()">Create account</button>' +
-      '</div>' +
-      '<p id="authMsg" class="banner" role="status" aria-live="polite"></p>';
+  const accountPopoverBody = user
+    ? "<div class=\"profile-box\">" +
+        "<div class=\"profile-email\">" + safeEmail + "</div>" +
+        "<div class=\"profile-meta\">" + safeName + " &middot; Signed in</div>" +
+      "</div>" +
+      "<div class=\"btn-row\">" +
+        "<button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"logout()\">Sign out</button>" +
+      "</div>"
+    : "<div class=\"btn-row\" style=\"margin-top:0;\">" +
+        "<a class=\"btn btn-soft btn-sm\" href=\"/auth/google\">Continue with Google</a>" +
+      "</div>" +
+      "<hr class=\"divider\" />" +
+      "<div class=\"form-grid-auth\">" +
+        "<input id=\"authName\" type=\"text\" placeholder=\"Full name (for registration)\" aria-label=\"Full name\" />" +
+        "<input id=\"authEmail\" type=\"email\" placeholder=\"Email address\" aria-label=\"Email address\" />" +
+        "<input id=\"authPassword\" type=\"password\" placeholder=\"Password (min. 6 characters)\" aria-label=\"Password\" />" +
+      "</div>" +
+      "<div class=\"btn-row\">" +
+        "<button class=\"btn-primary btn-sm\" type=\"button\" onclick=\"loginUser()\">Sign in</button>" +
+        "<button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"registerUser()\">Create account</button>" +
+      "</div>";
 
   return "<!doctype html>\n" +
     "<html lang=\"en\">\n" +
@@ -285,11 +359,24 @@ function renderHomePage(user) {
     "      <nav class=\"nav-group\" aria-label=\"Primary navigation\">\n" +
     "        <a class=\"nav-link\" href=\"#groups-card\">Study Groups</a>\n" +
     "        <a class=\"nav-link\" href=\"#ai-card\">AI Advisor</a>\n" +
-    "        <a class=\"nav-link\" href=\"#account-card\">Account</a>\n" +
     "        <span class=\"session-pill\" id=\"sessionStatus\">\n" +
     "          <span class=\"" + dotClass + "\"></span>\n" +
     "          <span>" + sessionPillText + "</span>\n" +
     "        </span>\n" +
+    "        <button id=\"accountIconBtn\" class=\"account-icon-btn\" type=\"button\" aria-label=\"Account menu\" aria-expanded=\"false\" onclick=\"toggleAccountPopover(event)\">\n" +
+    "          <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\n" +
+    "            <path d=\"M20 21a8 8 0 0 0-16 0\"></path>\n" +
+    "            <circle cx=\"12\" cy=\"7\" r=\"4\"></circle>\n" +
+    "          </svg>\n" +
+    "        </button>\n" +
+    "        <div id=\"accountPopover\" class=\"account-popover\" role=\"dialog\" aria-label=\"Account options\">\n" +
+    "          <div class=\"popover-head\">\n" +
+    "            <span class=\"popover-title\">" + (isAuth ? "Account details" : "Sign in or register") + "</span>\n" +
+    "            <button class=\"popover-close\" type=\"button\" aria-label=\"Close account menu\" onclick=\"closeAccountPopover()\">&times;</button>\n" +
+    "          </div>\n" +
+    "          " + accountPopoverBody + "\n" +
+    "          <p id=\"authMsg\" class=\"banner\" role=\"status\" aria-live=\"polite\"></p>\n" +
+    "        </div>\n" +
     "      </nav>\n" +
     "    </div>\n" +
     "  </header>\n" +
@@ -309,81 +396,86 @@ function renderHomePage(user) {
     "        <div class=\"metric-value\" id=\"statSeatsCount\">-</div>\n" +
     "        <div class=\"metric-sub\">Combined seats across groups</div>\n" +
     "      </div>\n" +
-    "      <div class=\"metric-card\">\n" +
-    "        <div class=\"metric-label\">Account Session</div>\n" +
-    "        <div class=\"metric-value\" style=\"font-size: 1.15rem; margin-top: 8px;\">" + metricSessionTitle + "</div>\n" +
-    "        <div class=\"metric-sub\">" + metricSessionSub + "</div>\n" +
-    "      </div>\n" +
     "    </section>\n" +
     "    <div class=\"workspace-grid\">\n" +
-    "      <div class=\"column-stack\">\n" +
-    "        <section class=\"card\" id=\"groups-card\">\n" +
-    "          <div class=\"card-top\">\n" +
-    "            <div>\n" +
-    "              <h2 class=\"card-title\">Study Groups</h2>\n" +
-    "              <p class=\"card-desc\">Create a group, join or leave by ID, and inspect live cohorts.</p>\n" +
-    "            </div>\n" +
-    "            <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"loadGroups()\">Refresh</button>\n" +
+    "      <section class=\"card\" id=\"groups-card\">\n" +
+    "        <div class=\"card-top\">\n" +
+    "          <div>\n" +
+    "            <h2 class=\"card-title\">Study Groups</h2>\n" +
+    "            <p class=\"card-desc\">Create a group, join or leave by ID, and inspect live cohorts.</p>\n" +
     "          </div>\n" +
-    "          <span class=\"section-label\">New Study Group</span>\n" +
-    "          <div class=\"form-grid\">\n" +
-    "            <input id=\"groupTitle\" type=\"text\" placeholder=\"Group title\" aria-label=\"Group title\" />\n" +
-    "            <input id=\"groupSubject\" type=\"text\" placeholder=\"Subject\" aria-label=\"Subject\" />\n" +
-    "            <input id=\"groupCapacity\" type=\"number\" min=\"1\" placeholder=\"Max capacity\" aria-label=\"Max capacity\" />\n" +
+    "          <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"loadGroups()\">Refresh</button>\n" +
+    "        </div>\n" +
+    "        <span class=\"section-label\">New Study Group</span>\n" +
+    "        <div class=\"form-grid\">\n" +
+    "          <input id=\"groupTitle\" type=\"text\" placeholder=\"Group title\" aria-label=\"Group title\" />\n" +
+    "          <input id=\"groupSubject\" type=\"text\" placeholder=\"Subject\" aria-label=\"Subject\" />\n" +
+    "          <input id=\"groupCapacity\" type=\"number\" min=\"1\" placeholder=\"Max capacity\" aria-label=\"Max capacity\" />\n" +
+    "        </div>\n" +
+    "        <div class=\"btn-row\">\n" +
+    "          <button class=\"btn-primary\" type=\"button\" onclick=\"createNewGroup()\">Create Group</button>\n" +
+    "        </div>\n" +
+    "        <hr class=\"divider\" />\n" +
+    "        <span class=\"section-label\">Membership Actions</span>\n" +
+    "        <div class=\"btn-row\" style=\"margin-top:0;\">\n" +
+    "          <input id=\"membershipGroupId\" type=\"number\" min=\"1\" placeholder=\"Group ID\" aria-label=\"Group ID\" style=\"max-width:140px;\" />\n" +
+    "          <button class=\"btn-secondary\" type=\"button\" onclick=\"joinSelectedGroup()\">Join Group</button>\n" +
+    "          <button class=\"btn-secondary\" type=\"button\" onclick=\"leaveSelectedGroup()\">Leave Group</button>\n" +
+    "        </div>\n" +
+    "        <p id=\"groupMsg\" class=\"banner\" role=\"status\" aria-live=\"polite\"></p>\n" +
+    "        <hr class=\"divider\" />\n" +
+    "        <span class=\"section-label\">Active Groups</span>\n" +
+    "        <div id=\"groupsCards\" class=\"group-list\" aria-live=\"polite\">\n" +
+    "          <div class=\"state-box\">Loading groups...</div>\n" +
+    "        </div>\n" +
+    "        <details>\n" +
+    "          <summary>Inspect JSON response</summary>\n" +
+    "          <pre id=\"groupsOutput\">Loading...</pre>\n" +
+    "        </details>\n" +
+    "      </section>\n" +
+    "      <section class=\"card\" id=\"ai-card\">\n" +
+    "        <div class=\"card-top\">\n" +
+    "          <div>\n" +
+    "            <h2 class=\"card-title\">AI Study Recommendations</h2>\n" +
+    "            <p class=\"card-desc\">Enter your topic, schedule, or level to get study suggestions.</p>\n" +
     "          </div>\n" +
-    "          <div class=\"btn-row\">\n" +
-    "            <button class=\"btn-primary\" type=\"button\" onclick=\"createNewGroup()\">Create Group</button>\n" +
-    "          </div>\n" +
-    "          <hr class=\"divider\" />\n" +
-    "          <span class=\"section-label\">Membership Actions</span>\n" +
-    "          <div class=\"btn-row\" style=\"margin-top: 0;\">\n" +
-    "            <input id=\"membershipGroupId\" type=\"number\" min=\"1\" placeholder=\"Group ID\" aria-label=\"Group ID\" style=\"max-width: 140px;\" />\n" +
-    "            <button class=\"btn-secondary\" type=\"button\" onclick=\"joinSelectedGroup()\">Join Group</button>\n" +
-    "            <button class=\"btn-secondary\" type=\"button\" onclick=\"leaveSelectedGroup()\">Leave Group</button>\n" +
-    "          </div>\n" +
-    "          <p id=\"groupMsg\" class=\"banner\" role=\"status\" aria-live=\"polite\"></p>\n" +
-    "          <hr class=\"divider\" />\n" +
-    "          <span class=\"section-label\">Active Groups</span>\n" +
-    "          <div id=\"groupsCards\" class=\"group-list\" aria-live=\"polite\">\n" +
-    "            <div class=\"state-box\">Loading groups...</div>\n" +
-    "          </div>\n" +
-    "          <details>\n" +
-    "            <summary>Inspect JSON response</summary>\n" +
-    "            <pre id=\"groupsOutput\">Loading...</pre>\n" +
-    "          </details>\n" +
-    "        </section>\n" +
-    "      </div>\n" +
-    "      <div class=\"column-stack\">\n" +
-    "        <section class=\"card\" id=\"account-card\">\n" +
-    "          <div class=\"card-top\">\n" +
-    "            <div>\n" +
-    "              <h2 class=\"card-title\">Account &amp; Session</h2>\n" +
-    "              <p class=\"card-desc\">" + (isAuth ? "Your authenticated session details." : "Sign in to manage group membership.") + "</p>\n" +
-    "            </div>\n" +
-    "          </div>\n" +
-    "          " + accountSectionHtml + "\n" +
-    "        </section>\n" +
-    "        <section class=\"card\" id=\"ai-card\">\n" +
-    "          <div class=\"card-top\">\n" +
-    "            <div>\n" +
-    "              <h2 class=\"card-title\">AI Study Recommendations</h2>\n" +
-    "              <p class=\"card-desc\">Enter your topic, schedule, or level to get study suggestions.</p>\n" +
-    "            </div>\n" +
-    "          </div>\n" +
-    "          <input id=\"prefsInput\" type=\"text\" placeholder=\"Topic, schedule, level (e.g. Web Programming)\" aria-label=\"Study preferences\" />\n" +
-    "          <div class=\"btn-row\">\n" +
-    "            <button class=\"btn-primary\" type=\"button\" onclick=\"getRecommendations()\">Get Recommendations</button>\n" +
-    "          </div>\n" +
-    "          <div id=\"aiFormatted\" class=\"ai-result\" aria-live=\"polite\">Enter preferences above and click Get Recommendations.</div>\n" +
-    "          <details>\n" +
-    "            <summary>Inspect raw model payload</summary>\n" +
-    "            <pre id=\"aiOutput\">No request sent yet.</pre>\n" +
-    "          </details>\n" +
-    "        </section>\n" +
-    "      </div>\n" +
+    "        </div>\n" +
+    "        <input id=\"prefsInput\" type=\"text\" placeholder=\"Topic, schedule, level (e.g. Web Programming)\" aria-label=\"Study preferences\" />\n" +
+    "        <div class=\"btn-row\">\n" +
+    "          <button class=\"btn-primary\" type=\"button\" onclick=\"getRecommendations()\">Get Recommendations</button>\n" +
+    "        </div>\n" +
+    "        <div id=\"aiFormatted\" class=\"ai-result\" aria-live=\"polite\">Enter preferences above and click Get Recommendations.</div>\n" +
+    "        <details>\n" +
+    "          <summary>Inspect raw model payload</summary>\n" +
+    "          <pre id=\"aiOutput\">No request sent yet.</pre>\n" +
+    "        </details>\n" +
+    "      </section>\n" +
     "    </div>\n" +
     "  </main>\n" +
     "  <script>\n" +
+    "    function toggleAccountPopover(e) {\n" +
+    "      if (e) e.stopPropagation();\n" +
+    "      const pop = document.getElementById(\"accountPopover\");\n" +
+    "      const btn = document.getElementById(\"accountIconBtn\");\n" +
+    "      if (!pop) return;\n" +
+    "      const next = !pop.classList.contains(\"open\");\n" +
+    "      pop.classList.toggle(\"open\", next);\n" +
+    "      if (btn) btn.setAttribute(\"aria-expanded\", String(next));\n" +
+    "    }\n" +
+    "    function closeAccountPopover() {\n" +
+    "      const pop = document.getElementById(\"accountPopover\");\n" +
+    "      const btn = document.getElementById(\"accountIconBtn\");\n" +
+    "      if (pop) pop.classList.remove(\"open\");\n" +
+    "      if (btn) btn.setAttribute(\"aria-expanded\", \"false\");\n" +
+    "    }\n" +
+    "    document.addEventListener(\"click\", (e) => {\n" +
+    "      const pop = document.getElementById(\"accountPopover\");\n" +
+    "      const btn = document.getElementById(\"accountIconBtn\");\n" +
+    "      if (!pop || !pop.classList.contains(\"open\")) return;\n" +
+    "      if (!pop.contains(e.target) && (!btn || !btn.contains(e.target))) {\n" +
+    "        closeAccountPopover();\n" +
+    "      }\n" +
+    "    });\n" +
     "    function setBanner(elId, message, type) {\n" +
     "      const el = document.getElementById(elId);\n" +
     "      if (!el) return;\n" +
@@ -438,7 +530,7 @@ function renderHomePage(user) {
     "        const info = document.createElement(\"div\");\n" +
     "        const title = document.createElement(\"div\");\n" +
     "        title.className = \"group-name\";\n" +
-    "        title.textContent = \"#\" + g.id + \" · \" + (g.title || \"Untitled Group\");\n" +
+    "        title.textContent = \"#\" + g.id + \" \u00b7 \" + (g.title || \"Untitled Group\");\n" +
     "        const tags = document.createElement(\"div\");\n" +
     "        tags.className = \"group-tags\";\n" +
     "        const subjTag = document.createElement(\"span\");\n" +
@@ -477,13 +569,7 @@ function renderHomePage(user) {
     "    }\n" +
     "    async function loadGroups() {\n" +
     "      const container = document.getElementById(\"groupsCards\");\n" +
-    "      if (container) {\n" +
-    "        container.textContent = \"\";\n" +
-    "        const loading = document.createElement(\"div\");\n" +
-    "        loading.className = \"state-box\";\n" +
-    "        loading.textContent = \"Loading groups...\";\n" +
-    "        container.appendChild(loading);\n" +
-    "      }\n" +
+    "      if (container) { container.textContent = \"\"; const loading = document.createElement(\"div\"); loading.className = \"state-box\"; loading.textContent = \"Loading groups...\"; container.appendChild(loading); }\n" +
     "      try {\n" +
     "        const res = await fetch(\"/api/groups\");\n" +
     "        const data = await res.json();\n" +
