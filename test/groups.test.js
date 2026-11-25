@@ -89,3 +89,35 @@ test('AC-6 AI recommendations work with fake client and fallback', async () => {
     'Съобщението за грешка трябва да съвпада'
   );
 });
+test('getStudyRecommendations returns provider JSON when API key and ok response are present', async () => {
+  const prevKey = process.env.GEMINI_API_KEY;
+  process.env.GEMINI_API_KEY = 'test-key-for-unit-test';
+  try {
+    const fakeOkClient = async () => ({
+      ok: true,
+      json: async () => ({ candidates: [{ content: { parts: [{ text: 'Group A' }] } }] }),
+    });
+    const out = await getStudyRecommendations('Algorithms', fakeOkClient);
+    assert.equal(out.candidates[0].content.parts[0].text, 'Group A');
+  } finally {
+    if (prevKey === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = prevKey;
+  }
+});
+
+test('getStudyRecommendations falls back when provider responds with non-ok status', async () => {
+  const prevKey = process.env.GEMINI_API_KEY;
+  process.env.GEMINI_API_KEY = 'test-key-for-unit-test';
+  try {
+    const fakeErrClient = async () => ({
+      ok: false,
+      status: 503,
+      json: async () => ({}),
+    });
+    const out = await getStudyRecommendations('Algorithms', fakeErrClient);
+    assert.equal(out.fallback, true);
+  } finally {
+    if (prevKey === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = prevKey;
+  }
+});
