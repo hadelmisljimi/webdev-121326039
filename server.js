@@ -230,22 +230,321 @@ function renderHomePage(user) {
   const safeEmail = escapeHtml(user?.email || "");
   const safeName = escapeHtml(user?.name || "Student");
   const isAuth = Boolean(user);
-  const sessionLabel = isAuth ? "Signed in: " + safeEmail : "Guest / Гост";
-  const dotClass = isAuth ? "dot online" : "dot";
-  const statSessionText = isAuth ? safeName : "Not signed in";
-  const accountSub = isAuth
-    ? "Manage your active study session."
-    : "Sign in with Google or email/password to create or join groups.";
-  const accountBody = user
-    ? "<p class=\"muted\">Signed in as <strong>" + safeEmail + "</strong> (" + safeName + ")</p><div class=\"row\"><button class=\"btn-secondary\" type=\"button\" onclick=\"logout()\">Logout / Изход</button></div>"
-    : "<div class=\"row\"><a class=\"btn btn-ghost\" href=\"/auth/google\">Sign in with Google / Вход с Google</a></div><hr class=\"divider\" /><div class=\"field-grid\"><input id=\"authName\" type=\"text\" placeholder=\"Name (register) / Име\" aria-label=\"Name\" /><input id=\"authEmail\" type=\"email\" placeholder=\"Email / Имейл\" aria-label=\"Email\" /><input id=\"authPassword\" type=\"password\" placeholder=\"Password (min 6) / Парола\" aria-label=\"Password\" /></div><div class=\"row\"><button class=\"btn-primary\" type=\"button\" onclick=\"loginUser()\">Login / Вход</button><button class=\"btn-secondary\" type=\"button\" onclick=\"registerUser()\">Register / Регистрация</button></div><p id=\"authMsg\" class=\"status-banner\" role=\"status\" aria-live=\"polite\"></p>";
-  return ("<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n  <title>StudyGroupManager — Учебни групи</title>\n  <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />\n  <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin />\n  <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap\" rel=\"stylesheet\" />\n  <style>\n    :root {\n      --bg: #f4f6fb;\n      --surface: #ffffff;\n      --surface-subtle: #f8fafc;\n      --text: #0f172a;\n      --muted: #475569;\n      --border: #e2e8f0;\n      --primary: #2563eb;\n      --primary-hover: #1d4ed8;\n      --primary-soft: #eff6ff;\n      --success-bg: #ecfdf5;\n      --success-text: #065f46;\n      --success-border: #a7f3d0;\n      --error-bg: #fef2f2;\n      --error-text: #991b1b;\n      --error-border: #fecaca;\n      --warn-bg: #fffbeb;\n      --warn-text: #92400e;\n      --radius: 14px;\n      --radius-sm: 10px;\n      --shadow: 0 10px 25px -12px rgba(15, 23, 42, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.06);\n      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);\n    }\n    * { box-sizing: border-box; }\n    body {\n      margin: 0;\n      font-family: \"Inter\", system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif;\n      background: radial-gradient(circle at top right, #eef2ff 0%, var(--bg) 48%, #f8fafc 100%);\n      color: var(--text);\n      line-height: 1.55;\n      min-height: 100vh;\n    }\n    :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }\n    .topbar {\n      position: sticky; top: 0; z-index: 20;\n      background: rgba(255, 255, 255, 0.9);\n      backdrop-filter: blur(12px);\n      border-bottom: 1px solid var(--border);\n    }\n    .topbar-inner {\n      max-width: 1120px; margin: 0 auto; padding: 14px 20px;\n      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;\n    }\n    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }\n    .brand-mark {\n      width: 38px; height: 38px; border-radius: 10px;\n      background: linear-gradient(135deg, #2563eb, #4f46e5);\n      color: #fff; font-weight: 700; font-size: 0.95rem;\n      display: grid; place-items: center;\n      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);\n    }\n    .brand-title { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.015em; }\n    .brand-sub { font-size: 0.78rem; color: var(--muted); }\n    .nav-pills { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }\n    .nav-link {\n      text-decoration: none; color: var(--muted); font-size: 0.88rem; font-weight: 500;\n      padding: 7px 12px; border-radius: 8px; transition: background 0.15s ease, color 0.15s ease;\n    }\n    .nav-link:hover { background: var(--surface-subtle); color: var(--text); }\n    .session-chip {\n      display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px;\n      border-radius: 999px; font-size: 0.82rem; font-weight: 500;\n      border: 1px solid var(--border); background: var(--surface);\n    }\n    .dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; }\n    .dot.online { background: #10b981; }\n    .container { max-width: 1120px; margin: 0 auto; padding: 28px 20px 56px; }\n    .hero { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 24px; }\n    .hero h1 { margin: 0 0 6px; font-size: clamp(1.55rem, 3vw, 2.15rem); letter-spacing: -0.025em; }\n    .hero p { margin: 0; color: var(--muted); font-size: 0.96rem; }\n    .stats-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 24px; }\n    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow-sm); }\n    .stat-label { font-size: 0.78rem; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }\n    .stat-value { font-size: 1.45rem; font-weight: 700; margin-top: 4px; letter-spacing: -0.02em; }\n    .layout-grid { display: grid; grid-template-columns: 1.45fr 1fr; gap: 22px; align-items: start; }\n    .stack { display: flex; flex-direction: column; gap: 20px; }\n    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }\n    .card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }\n    .card h2 { margin: 0; font-size: 1.15rem; letter-spacing: -0.015em; }\n    .card-sub { margin: 2px 0 0; font-size: 0.85rem; color: var(--muted); }\n    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px; }\n    .field-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 10px; margin-top: 12px; }\n    input, textarea {\n      width: 100%; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid #cbd5e1;\n      background: var(--surface); color: var(--text); font-family: inherit; font-size: 0.92rem;\n      transition: border-color 0.15s ease, box-shadow 0.15s ease;\n    }\n    input:hover, textarea:hover { border-color: #94a3b8; }\n    input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14); outline: none; }\n    button, .btn {\n      display: inline-flex; align-items: center; justify-content: center; gap: 6px;\n      padding: 10px 15px; border-radius: var(--radius-sm); border: 1px solid transparent;\n      font-family: inherit; font-size: 0.9rem; font-weight: 600; cursor: pointer;\n      text-decoration: none; transition: all 0.15s ease;\n    }\n    button:active, .btn:active { transform: translateY(1px); }\n    .btn-primary { background: var(--primary); color: #ffffff; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.22); }\n    .btn-primary:hover { background: var(--primary-hover); }\n    .btn-secondary { background: var(--surface); color: var(--text); border-color: #cbd5e1; }\n    .btn-secondary:hover { background: var(--surface-subtle); border-color: #94a3b8; }\n    .btn-ghost { background: var(--primary-soft); color: var(--primary); }\n    .btn-ghost:hover { background: #dbeafe; }\n    .btn-sm { padding: 7px 11px; font-size: 0.82rem; border-radius: 8px; }\n    .status-banner { margin-top: 12px; padding: 10px 13px; border-radius: var(--radius-sm); font-size: 0.88rem; font-weight: 500; display: none; }\n    .status-banner.visible { display: block; }\n    .status-banner.info { background: var(--primary-soft); color: #1e40af; border: 1px solid #bfdbfe; }\n    .status-banner.success { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }\n    .status-banner.error { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border); }\n    .muted { color: var(--muted); font-size: 0.88rem; }\n    .groups-list { display: grid; gap: 12px; margin-top: 16px; }\n    .group-item {\n      border: 1px solid var(--border); background: var(--surface-subtle); border-radius: var(--radius-sm);\n      padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;\n    }\n    .group-title { font-weight: 600; font-size: 0.98rem; color: var(--text); }\n    .group-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; align-items: center; }\n    .badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 0.76rem; font-weight: 600; background: #e2e8f0; color: #334155; }\n    .badge.open { background: var(--success-bg); color: var(--success-text); }\n    .badge.full { background: var(--warn-bg); color: var(--warn-text); }\n    .empty-state { text-align: center; padding: 28px 16px; border: 1px dashed #cbd5e1; border-radius: var(--radius-sm); background: var(--surface-subtle); margin-top: 14px; }\n    .ai-box { margin-top: 14px; padding: 14px; border-radius: var(--radius-sm); background: var(--surface-subtle); border: 1px solid var(--border); font-size: 0.9rem; white-space: pre-wrap; }\n    pre { background: #0f172a; color: #e2e8f0; padding: 12px 14px; border-radius: var(--radius-sm); overflow-x: auto; font-size: 0.8rem; margin-top: 10px; }\n    details summary { cursor: pointer; font-size: 0.82rem; color: var(--muted); margin-top: 10px; user-select: none; }\n    .divider { margin: 16px 0; border: none; border-top: 1px solid var(--border); }\n    @media (max-width: 900px) { .layout-grid { grid-template-columns: 1fr; } .stats-row { grid-template-columns: 1fr; } }\n  </style>\n</head>\n<body>\n  <header class=\"topbar\">\n    <div class=\"topbar-inner\">\n      <a class=\"brand\" href=\"/\">\n        <span class=\"brand-mark\">SG</span>\n        <span>\n          <span class=\"brand-title\">StudyGroupManager</span><br />\n          <span class=\"brand-sub\">Учебни групи и съвместна работа</span>\n        </span>\n      </a>\n      <nav class=\"nav-pills\" aria-label=\"Primary navigation\">\n        <a class=\"nav-link\" href=\"#groups-section\">Groups / Групи</a>\n        <a class=\"nav-link\" href=\"#ai-section\">AI Advisor / Препоръки</a>\n        <span class=\"session-chip\" id=\"sessionStatus\">\n          <span class=\"dot \" + (isAuth ? \"online\" : \"\") + \"></span>\n          <span>__SESSION_LABEL__</span>\n        </span>\n      </nav>\n    </div>\n  </header>\n  <main class=\"container\">\n    <section class=\"hero\">\n      <div>\n        <h1>Collaborative Study Groups</h1>\n        <p>Create study cohorts, track seat capacity, and get AI-assisted study group recommendations.</p>\n      </div>\n    </section>\n    <section class=\"stats-row\" aria-label=\"Workspace summary\">\n      <div class=\"stat-card\">\n        <div class=\"stat-label\">Active Groups / Групи</div>\n        <div class=\"stat-value\" id=\"statGroupsCount\">—</div>\n      </div>\n      <div class=\"stat-card\">\n        <div class=\"stat-label\">Total Seats / Места</div>\n        <div class=\"stat-value\" id=\"statSeatsCount\">—</div>\n      </div>\n      <div class=\"stat-card\">\n        <div class=\"stat-label\">Session / Сесия</div>\n        <div class=\"stat-value\" style=\"font-size: 1.05rem; margin-top: 8px;\">__STAT_SESSION__</div>\n      </div>\n    </section>\n    <div class=\"layout-grid\">\n      <div class=\"stack\">\n        <section class=\"card\" id=\"groups-section\">\n          <div class=\"card-header\">\n            <div>\n              <h2>Study Groups / Учебни групи</h2>\n              <p class=\"card-sub\">Browse open study groups, create a new cohort, or manage membership.</p>\n            </div>\n            <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"loadGroups()\">Refresh / Обнови</button>\n          </div>\n          <div class=\"field-grid\">\n            <input id=\"groupTitle\" type=\"text\" placeholder=\"Group title / Заглавие\" aria-label=\"Group title\" />\n            <input id=\"groupSubject\" type=\"text\" placeholder=\"Subject / Предмет\" aria-label=\"Subject\" />\n            <input id=\"groupCapacity\" type=\"number\" min=\"1\" placeholder=\"Max capacity / Капацитет\" aria-label=\"Max capacity\" />\n          </div>\n          <div class=\"row\">\n            <button class=\"btn-primary\" type=\"button\" onclick=\"createNewGroup()\">Create Group / Създай група</button>\n          </div>\n          <hr class=\"divider\" />\n          <div class=\"row\">\n            <input id=\"membershipGroupId\" type=\"number\" min=\"1\" placeholder=\"Group ID / ID на група\" aria-label=\"Group ID\" style=\"max-width: 190px;\" />\n            <button class=\"btn-secondary\" type=\"button\" onclick=\"joinSelectedGroup()\">Join Group / Включи се</button>\n            <button class=\"btn-secondary\" type=\"button\" onclick=\"leaveSelectedGroup()\">Leave Group / Напусни</button>\n          </div>\n          <p id=\"groupMsg\" class=\"status-banner\" role=\"status\" aria-live=\"polite\"></p>\n          <div id=\"groupsCards\" class=\"groups-list\" aria-live=\"polite\">\n            <div class=\"empty-state\">Loading groups... / Зареждане на групите...</div>\n          </div>\n          <details>\n            <summary>Raw JSON / Технически отговор</summary>\n            <pre id=\"groupsOutput\">Loading... / Зареждане...</pre>\n          </details>\n        </section>\n      </div>\n      <div class=\"stack\">\n        <section class=\"card\" id=\"account-section\">\n          <div class=\"card-header\">\n            <div>\n              <h2>Account &amp; Session / Профил</h2>\n              <p class=\"card-sub\">__ACCOUNT_SUB__</p>\n            </div>\n          </div>\n          \" + (user\n            ? \"<p class=\\\"muted\\\">Signed in as <strong>\" + safeEmail + \"</strong> (\" + safeName + \")</p><div class=\\\"row\\\"><button class=\\\"btn-secondary\\\" type=\\\"button\\\" onclick=\\\"logout()\\\">Logout / Изход</button></div>\"\n            : \"<div class=\\\"row\\\"><a class=\\\"btn btn-ghost\\\" href=\\\"/auth/google\\\">Sign in with Google / Вход с Google</a></div><hr class=\\\"divider\\\" /><div class=\\\"field-grid\\\"><input id=\\\"authName\\\" type=\\\"text\\\" placeholder=\\\"Name (register) / Име\\\" aria-label=\\\"Name\\\" /><input id=\\\"authEmail\\\" type=\\\"email\\\" placeholder=\\\"Email / Имейл\\\" aria-label=\\\"Email\\\" /><input id=\\\"authPassword\\\" type=\\\"password\\\" placeholder=\\\"Password (min 6) / Парола\\\" aria-label=\\\"Password\\\" /></div><div class=\\\"row\\\"><button class=\\\"btn-primary\\\" type=\\\"button\\\" onclick=\\\"loginUser()\\\">Login / Вход</button><button class=\\\"btn-secondary\\\" type=\\\"button\\\" onclick=\\\"registerUser()\\\">Register / Регистрация</button></div><p id=\\\"authMsg\\\" class=\\\"status-banner\\\" role=\\\"status\\\" aria-live=\\\"polite\\\"></p>\")\n        </section>\n        <section class=\"card\" id=\"ai-section\">\n          <div class=\"card-header\">\n            <div>\n              <h2>AI Study Recommendations / AI препоръки</h2>\n              <p class=\"card-sub\">Get tailored study suggestions based on your topic, schedule, or level.</p>\n            </div>\n          </div>\n          <input id=\"prefsInput\" type=\"text\" placeholder=\"Topic, schedule, level / Тема, график, ниво\" aria-label=\"Study preferences\" />\n          <div class=\"row\">\n            <button class=\"btn-primary\" type=\"button\" onclick=\"getRecommendations()\">Get Recommendations / Вземи препоръки</button>\n          </div>\n          <div id=\"aiFormatted\" class=\"ai-box\" aria-live=\"polite\">Enter preferences above. / Въведете предпочитания по-горе.</div>\n          <details>\n            <summary>Raw AI response / Суров отговор</summary>\n            <pre id=\"aiOutput\">Enter preferences above. / Въведете предпочитания по-горе.</pre>\n          </details>\n        </section>\n      </div>\n    </div>\n  </main>\n  <script>\n    function setBanner(elId, message, type = \"info\") {\n      const el = document.getElementById(elId);\n      if (!el) return;\n      if (!message) { el.textContent = \"\"; el.className = \"status-banner\"; return; }\n      el.textContent = message;\n      el.className = \"status-banner visible \" + type;\n    }\n    async function loginUser() {\n      setBanner(\"authMsg\", \"Signing in...\", \"info\");\n      const email = document.getElementById(\"authEmail\").value;\n      const password = document.getElementById(\"authPassword\").value;\n      try {\n        const res = await fetch(\"/auth/login\", { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: JSON.stringify({ email, password }) });\n        const data = await res.json();\n        if (res.ok) { setBanner(\"authMsg\", \"Signed in successfully.\", \"success\"); location.reload(); }\n        else { setBanner(\"authMsg\", data.error || \"Login failed\", \"error\"); }\n      } catch { setBanner(\"authMsg\", \"Network error while signing in.\", \"error\"); }\n    }\n    async function registerUser() {\n      setBanner(\"authMsg\", \"Creating account...\", \"info\");\n      const name = document.getElementById(\"authName\").value;\n      const email = document.getElementById(\"authEmail\").value;\n      const password = document.getElementById(\"authPassword\").value;\n      try {\n        const res = await fetch(\"/auth/register\", { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: JSON.stringify({ name, email, password }) });\n        const data = await res.json();\n        if (res.ok) { setBanner(\"authMsg\", \"Registered successfully.\", \"success\"); location.reload(); }\n        else { setBanner(\"authMsg\", data.error || \"Registration failed\", \"error\"); }\n      } catch { setBanner(\"authMsg\", \"Network error while registering.\", \"error\"); }\n    }\n    async function logout() { await fetch(\"/auth/logout\", { method: \"POST\" }); location.reload(); }\n    function renderGroupCards(groups) {\n      const container = document.getElementById(\"groupsCards\");\n      container.textContent = \"\";\n      const countEl = document.getElementById(\"statGroupsCount\");\n      const seatsEl = document.getElementById(\"statSeatsCount\");\n      if (countEl) countEl.textContent = String(groups.length);\n      if (seatsEl) {\n        const totalCap = groups.reduce((acc, g) => acc + (Number(g.max_capacity) || 0), 0);\n        seatsEl.textContent = String(totalCap);\n      }\n      if (!groups.length) {\n        const empty = document.createElement(\"div\");\n        empty.className = \"empty-state\";\n        empty.textContent = \"No study groups yet. Create the first one above.\";\n        container.appendChild(empty);\n        return;\n      }\n      for (const g of groups) {\n        const item = document.createElement(\"div\");\n        item.className = \"group-item\";\n        const info = document.createElement(\"div\");\n        const title = document.createElement(\"div\");\n        title.className = \"group-title\";\n        title.textContent = \"#\" + g.id + \" · \" + (g.title || \"Untitled Group\");\n        const meta = document.createElement(\"div\");\n        meta.className = \"group-meta\";\n        const subjBadge = document.createElement(\"span\");\n        subjBadge.className = \"badge\";\n        subjBadge.textContent = g.subject || \"General\";\n        const membersCount = Number(g.member_count ?? g.current_members ?? 0);\n        const capCount = Number(g.max_capacity ?? 0);\n        const isFull = capCount > 0 && membersCount >= capCount;\n        const capBadge = document.createElement(\"span\");\n        capBadge.className = \"badge \" + (isFull ? \"full\" : \"open\");\n        capBadge.textContent = capCount > 0 ? (membersCount + \"/\" + capCount + \" members\") : (membersCount + \" members\");\n        meta.appendChild(subjBadge);\n        meta.appendChild(capBadge);\n        info.appendChild(title);\n        info.appendChild(meta);\n        const actions = document.createElement(\"div\");\n        actions.className = \"row\";\n        actions.style.marginTop = \"0\";\n        const selectBtn = document.createElement(\"button\");\n        selectBtn.type = \"button\";\n        selectBtn.className = \"btn-secondary btn-sm\";\n        selectBtn.textContent = \"Select ID\";\n        selectBtn.onclick = () => { const idInput = document.getElementById(\"membershipGroupId\"); if (idInput) idInput.value = String(g.id); };\n        const joinBtn = document.createElement(\"button\");\n        joinBtn.type = \"button\";\n        joinBtn.className = \"btn-primary btn-sm\";\n        joinBtn.textContent = \"Join\";\n        joinBtn.disabled = isFull;\n        joinBtn.onclick = async () => { const idInput = document.getElementById(\"membershipGroupId\"); if (idInput) idInput.value = String(g.id); await joinSelectedGroup(); };\n        actions.appendChild(selectBtn);\n        actions.appendChild(joinBtn);\n        item.appendChild(info);\n        item.appendChild(actions);\n        container.appendChild(item);\n      }\n    }\n    async function loadGroups() {\n      const container = document.getElementById(\"groupsCards\");\n      if (container) {\n        container.textContent = \"\";\n        const loading = document.createElement(\"div\");\n        loading.className = \"empty-state\";\n        loading.textContent = \"Loading groups... / Зареждане на групите...\";\n        container.appendChild(loading);\n      }\n      try {\n        const res = await fetch(\"/api/groups\");\n        const data = await res.json();\n        document.getElementById(\"groupsOutput\").textContent = JSON.stringify(data, null, 2);\n        const list = Array.isArray(data) ? data : (Array.isArray(data.groups) ? data.groups : []);\n        renderGroupCards(list);\n      } catch { setBanner(\"groupMsg\", \"Failed to load study groups.\", \"error\"); }\n    }\n    async function createNewGroup() {\n      setBanner(\"groupMsg\", \"Saving group...\", \"info\");\n      const title = document.getElementById(\"groupTitle\").value;\n      const subject = document.getElementById(\"groupSubject\").value;\n      const max_capacity = Number(document.getElementById(\"groupCapacity\").value);\n      try {\n        const res = await fetch(\"/api/groups\", { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: JSON.stringify({ title, subject, max_capacity }) });\n        const data = await res.json();\n        if (res.ok) { setBanner(\"groupMsg\", \"Created / Създадена: #\" + data.group.id, \"success\"); } else { setBanner(\"groupMsg\", data.error || \"Error\", \"error\"); }\n        await loadGroups();\n      } catch { setBanner(\"groupMsg\", \"Network error while creating group.\", \"error\"); }\n    }\n    async function joinSelectedGroup() {\n      const groupId = Number(document.getElementById(\"membershipGroupId\").value);\n      if (!groupId) { setBanner(\"groupMsg\", \"Please enter or select a valid Group ID.\", \"error\"); return; }\n      setBanner(\"groupMsg\", \"Joining group #\" + groupId + \"...\", \"info\");\n      try {\n        const res = await fetch(\"/api/groups/\" + groupId + \"/join\", { method: \"POST\" });\n        const data = await res.json();\n        setBanner(\"groupMsg\", res.ok ? (data.message || \"Joined group.\") : (data.error || \"Error\"), res.ok ? \"success\" : \"error\");\n        await loadGroups();\n      } catch { setBanner(\"groupMsg\", \"Network error while joining group.\", \"error\"); }\n    }\n    async function leaveSelectedGroup() {\n      const groupId = Number(document.getElementById(\"membershipGroupId\").value);\n      if (!groupId) { setBanner(\"groupMsg\", \"Please enter or select a valid Group ID.\", \"error\"); return; }\n      setBanner(\"groupMsg\", \"Leaving group #\" + groupId + \"...\", \"info\");\n      try {\n        const res = await fetch(\"/api/groups/\" + groupId + \"/leave\", { method: \"POST\" });\n        const data = await res.json();\n        setBanner(\"groupMsg\", res.ok ? (data.message || \"Left group.\") : (data.error || \"Error\"), res.ok ? \"success\" : \"error\");\n        await loadGroups();\n      } catch { setBanner(\"groupMsg\", \"Network error while leaving group.\", \"error\"); }\n    }\n    async function getRecommendations() {\n      const formattedEl = document.getElementById(\"aiFormatted\");\n      if (formattedEl) formattedEl.textContent = \"Generating recommendations... / Генериране на препоръки...\";\n      const preferences = document.getElementById(\"prefsInput\").value || \"Web Programming\";\n      try {\n        const res = await fetch(\"/api/recommendations\", { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: JSON.stringify({ preferences }) });\n        const data = await res.json();\n        document.getElementById(\"aiOutput\").textContent = JSON.stringify(data, null, 2);\n        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || data?.recommendation || data?.message || \"Recommendations received.\";\n        if (formattedEl) formattedEl.textContent = String(text);\n      } catch { if (formattedEl) formattedEl.textContent = \"Could not load recommendations right now.\"; }\n    }\n    loadGroups();\n  </script>\n</body>\n</html>")
-    .replace("__DOT_CLASS__", dotClass)
-    .replace("__SESSION_LABEL__", sessionLabel)
-    .replace("__STAT_SESSION__", statSessionText)
-    .replace("__ACCOUNT_SUB__", accountSub)
-    .replace("__ACCOUNT_BODY__", accountBody);
-}// Main HTTP server / Основен HTTP сървър
+
+  const sessionPillText = isAuth ? "Signed in: " + safeEmail : "Guest session";
+  const dotClass = isAuth ? "status-dot active" : "status-dot";
+  const metricSessionTitle = isAuth ? safeName : "Not signed in";
+  const metricSessionSub = isAuth ? safeEmail : "Sign in to create or join";
+
+  const accountSectionHtml = user
+    ? '<div class="profile-box">' +
+        '<div>' +
+          '<div class="profile-email">' + safeEmail + '</div>' +
+          '<div class="profile-meta">' + safeName + ' · Active session</div>' +
+        '</div>' +
+        '<button class="btn-secondary btn-sm" type="button" onclick="logout()">Sign out</button>' +
+      '</div>'
+    : '<div class="btn-row" style="margin-top: 0;">' +
+        '<a class="btn btn-soft" href="/auth/google">Continue with Google</a>' +
+      '</div>' +
+      '<hr class="divider" />' +
+      '<span class="section-label">Email &amp; Password</span>' +
+      '<div class="form-grid-auth">' +
+        '<input id="authName" type="text" placeholder="Full name (for registration)" aria-label="Full name" />' +
+        '<input id="authEmail" type="email" placeholder="Email address" aria-label="Email address" />' +
+        '<input id="authPassword" type="password" placeholder="Password (min. 6 characters)" aria-label="Password" />' +
+      '</div>' +
+      '<div class="btn-row">' +
+        '<button class="btn-primary" type="button" onclick="loginUser()">Sign in</button>' +
+        '<button class="btn-secondary" type="button" onclick="registerUser()">Create account</button>' +
+      '</div>' +
+      '<p id="authMsg" class="banner" role="status" aria-live="polite"></p>';
+
+  return "<!doctype html>\n" +
+    "<html lang=\"en\">\n" +
+    "<head>\n" +
+    "  <meta charset=\"utf-8\" />\n" +
+    "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n" +
+    "  <title>StudyGroupManager</title>\n" +
+    "  <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />\n" +
+    "  <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin />\n" +
+    "  <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap\" rel=\"stylesheet\" />\n" +
+    "  <style>" + css + "</style>\n" +
+    "</head>\n" +
+    "<body>\n" +
+    "  <header class=\"topbar\">\n" +
+    "    <div class=\"topbar-inner\">\n" +
+    "      <a class=\"brand\" href=\"/\">\n" +
+    "        <span class=\"brand-mark\">SG</span>\n" +
+    "        <span>\n" +
+    "          <span class=\"brand-title\">StudyGroupManager</span>\n" +
+    "          <span class=\"brand-sub\">Course Study Cohorts</span>\n" +
+    "        </span>\n" +
+    "      </a>\n" +
+    "      <nav class=\"nav-group\" aria-label=\"Primary navigation\">\n" +
+    "        <a class=\"nav-link\" href=\"#groups-card\">Study Groups</a>\n" +
+    "        <a class=\"nav-link\" href=\"#ai-card\">AI Advisor</a>\n" +
+    "        <a class=\"nav-link\" href=\"#account-card\">Account</a>\n" +
+    "        <span class=\"session-pill\" id=\"sessionStatus\">\n" +
+    "          <span class=\"" + dotClass + "\"></span>\n" +
+    "          <span>" + sessionPillText + "</span>\n" +
+    "        </span>\n" +
+    "      </nav>\n" +
+    "    </div>\n" +
+    "  </header>\n" +
+    "  <main class=\"container\">\n" +
+    "    <div class=\"page-header\">\n" +
+    "      <h1>Collaborative Study Groups</h1>\n" +
+    "      <p>Organize study groups, manage seat capacity, and get AI-powered study recommendations.</p>\n" +
+    "    </div>\n" +
+    "    <section class=\"metrics-grid\" aria-label=\"Overview metrics\">\n" +
+    "      <div class=\"metric-card\">\n" +
+    "        <div class=\"metric-label\">Study Groups</div>\n" +
+    "        <div class=\"metric-value\" id=\"statGroupsCount\">-</div>\n" +
+    "        <div class=\"metric-sub\">Available cohorts</div>\n" +
+    "      </div>\n" +
+    "      <div class=\"metric-card\">\n" +
+    "        <div class=\"metric-label\">Total Capacity</div>\n" +
+    "        <div class=\"metric-value\" id=\"statSeatsCount\">-</div>\n" +
+    "        <div class=\"metric-sub\">Combined seats across groups</div>\n" +
+    "      </div>\n" +
+    "      <div class=\"metric-card\">\n" +
+    "        <div class=\"metric-label\">Account Session</div>\n" +
+    "        <div class=\"metric-value\" style=\"font-size: 1.15rem; margin-top: 8px;\">" + metricSessionTitle + "</div>\n" +
+    "        <div class=\"metric-sub\">" + metricSessionSub + "</div>\n" +
+    "      </div>\n" +
+    "    </section>\n" +
+    "    <div class=\"workspace-grid\">\n" +
+    "      <div class=\"column-stack\">\n" +
+    "        <section class=\"card\" id=\"groups-card\">\n" +
+    "          <div class=\"card-top\">\n" +
+    "            <div>\n" +
+    "              <h2 class=\"card-title\">Study Groups</h2>\n" +
+    "              <p class=\"card-desc\">Create a group, join or leave by ID, and inspect live cohorts.</p>\n" +
+    "            </div>\n" +
+    "            <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"loadGroups()\">Refresh</button>\n" +
+    "          </div>\n" +
+    "          <span class=\"section-label\">New Study Group</span>\n" +
+    "          <div class=\"form-grid\">\n" +
+    "            <input id=\"groupTitle\" type=\"text\" placeholder=\"Group title\" aria-label=\"Group title\" />\n" +
+    "            <input id=\"groupSubject\" type=\"text\" placeholder=\"Subject\" aria-label=\"Subject\" />\n" +
+    "            <input id=\"groupCapacity\" type=\"number\" min=\"1\" placeholder=\"Max capacity\" aria-label=\"Max capacity\" />\n" +
+    "          </div>\n" +
+    "          <div class=\"btn-row\">\n" +
+    "            <button class=\"btn-primary\" type=\"button\" onclick=\"createNewGroup()\">Create Group</button>\n" +
+    "          </div>\n" +
+    "          <hr class=\"divider\" />\n" +
+    "          <span class=\"section-label\">Membership Actions</span>\n" +
+    "          <div class=\"btn-row\" style=\"margin-top: 0;\">\n" +
+    "            <input id=\"membershipGroupId\" type=\"number\" min=\"1\" placeholder=\"Group ID\" aria-label=\"Group ID\" style=\"max-width: 140px;\" />\n" +
+    "            <button class=\"btn-secondary\" type=\"button\" onclick=\"joinSelectedGroup()\">Join Group</button>\n" +
+    "            <button class=\"btn-secondary\" type=\"button\" onclick=\"leaveSelectedGroup()\">Leave Group</button>\n" +
+    "          </div>\n" +
+    "          <p id=\"groupMsg\" class=\"banner\" role=\"status\" aria-live=\"polite\"></p>\n" +
+    "          <hr class=\"divider\" />\n" +
+    "          <span class=\"section-label\">Active Groups</span>\n" +
+    "          <div id=\"groupsCards\" class=\"group-list\" aria-live=\"polite\">\n" +
+    "            <div class=\"state-box\">Loading groups...</div>\n" +
+    "          </div>\n" +
+    "          <details>\n" +
+    "            <summary>Inspect JSON response</summary>\n" +
+    "            <pre id=\"groupsOutput\">Loading...</pre>\n" +
+    "          </details>\n" +
+    "        </section>\n" +
+    "      </div>\n" +
+    "      <div class=\"column-stack\">\n" +
+    "        <section class=\"card\" id=\"account-card\">\n" +
+    "          <div class=\"card-top\">\n" +
+    "            <div>\n" +
+    "              <h2 class=\"card-title\">Account &amp; Session</h2>\n" +
+    "              <p class=\"card-desc\">" + (isAuth ? "Your authenticated session details." : "Sign in to manage group membership.") + "</p>\n" +
+    "            </div>\n" +
+    "          </div>\n" +
+    "          " + accountSectionHtml + "\n" +
+    "        </section>\n" +
+    "        <section class=\"card\" id=\"ai-card\">\n" +
+    "          <div class=\"card-top\">\n" +
+    "            <div>\n" +
+    "              <h2 class=\"card-title\">AI Study Recommendations</h2>\n" +
+    "              <p class=\"card-desc\">Enter your topic, schedule, or level to get study suggestions.</p>\n" +
+    "            </div>\n" +
+    "          </div>\n" +
+    "          <input id=\"prefsInput\" type=\"text\" placeholder=\"Topic, schedule, level (e.g. Web Programming)\" aria-label=\"Study preferences\" />\n" +
+    "          <div class=\"btn-row\">\n" +
+    "            <button class=\"btn-primary\" type=\"button\" onclick=\"getRecommendations()\">Get Recommendations</button>\n" +
+    "          </div>\n" +
+    "          <div id=\"aiFormatted\" class=\"ai-result\" aria-live=\"polite\">Enter preferences above and click Get Recommendations.</div>\n" +
+    "          <details>\n" +
+    "            <summary>Inspect raw model payload</summary>\n" +
+    "            <pre id=\"aiOutput\">No request sent yet.</pre>\n" +
+    "          </details>\n" +
+    "        </section>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </main>\n" +
+    "  <script>\n" +
+    "    function setBanner(elId, message, type) {\n" +
+    "      const el = document.getElementById(elId);\n" +
+    "      if (!el) return;\n" +
+    "      if (!message) { el.textContent = \"\"; el.className = \"banner\"; return; }\n" +
+    "      el.textContent = message;\n" +
+    "      el.className = \"banner show \" + (type || \"info\");\n" +
+    "    }\n" +
+    "    async function loginUser() {\n" +
+    "      setBanner(\"authMsg\", \"Signing in...\", \"info\");\n" +
+    "      const email = document.getElementById(\"authEmail\").value;\n" +
+    "      const password = document.getElementById(\"authPassword\").value;\n" +
+    "      try {\n" +
+    "        const res = await fetch(\"/auth/login\", { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: JSON.stringify({ email, password }) });\n" +
+    "        const data = await res.json();\n" +
+    "        if (res.ok) { setBanner(\"authMsg\", \"Signed in successfully.\", \"success\"); location.reload(); }\n" +
+    "        else { setBanner(\"authMsg\", data.error || \"Login failed.\", \"error\"); }\n" +
+    "      } catch { setBanner(\"authMsg\", \"Network error while signing in.\", \"error\"); }\n" +
+    "    }\n" +
+    "    async function registerUser() {\n" +
+    "      setBanner(\"authMsg\", \"Creating account...\", \"info\");\n" +
+    "      const name = document.getElementById(\"authName\").value;\n" +
+    "      const email = document.getElementById(\"authEmail\").value;\n" +
+    "      const password = document.getElementById(\"authPassword\").value;\n" +
+    "      try {\n" +
+    "        const res = await fetch(\"/auth/register\", { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: JSON.stringify({ name, email, password }) });\n" +
+    "        const data = await res.json();\n" +
+    "        if (res.ok) { setBanner(\"authMsg\", \"Account created.\", \"success\"); location.reload(); }\n" +
+    "        else { setBanner(\"authMsg\", data.error || \"Registration failed.\", \"error\"); }\n" +
+    "      } catch { setBanner(\"authMsg\", \"Network error while registering.\", \"error\"); }\n" +
+    "    }\n" +
+    "    async function logout() { await fetch(\"/auth/logout\", { method: \"POST\" }); location.reload(); }\n" +
+    "    function renderGroupCards(groups) {\n" +
+    "      const container = document.getElementById(\"groupsCards\");\n" +
+    "      container.textContent = \"\";\n" +
+    "      const countEl = document.getElementById(\"statGroupsCount\");\n" +
+    "      const seatsEl = document.getElementById(\"statSeatsCount\");\n" +
+    "      if (countEl) countEl.textContent = String(groups.length);\n" +
+    "      if (seatsEl) {\n" +
+    "        const totalCap = groups.reduce((acc, g) => acc + (Number(g.max_capacity) || 0), 0);\n" +
+    "        seatsEl.textContent = String(totalCap);\n" +
+    "      }\n" +
+    "      if (!groups.length) {\n" +
+    "        const empty = document.createElement(\"div\");\n" +
+    "        empty.className = \"state-box\";\n" +
+    "        empty.textContent = \"No study groups yet. Create the first group above.\";\n" +
+    "        container.appendChild(empty);\n" +
+    "        return;\n" +
+    "      }\n" +
+    "      for (const g of groups) {\n" +
+    "        const item = document.createElement(\"div\");\n" +
+    "        item.className = \"group-card\";\n" +
+    "        const info = document.createElement(\"div\");\n" +
+    "        const title = document.createElement(\"div\");\n" +
+    "        title.className = \"group-name\";\n" +
+    "        title.textContent = \"#\" + g.id + \" · \" + (g.title || \"Untitled Group\");\n" +
+    "        const tags = document.createElement(\"div\");\n" +
+    "        tags.className = \"group-tags\";\n" +
+    "        const subjTag = document.createElement(\"span\");\n" +
+    "        subjTag.className = \"tag\";\n" +
+    "        subjTag.textContent = g.subject || \"General\";\n" +
+    "        const membersCount = Number(g.member_count ?? g.current_members ?? 0);\n" +
+    "        const capCount = Number(g.max_capacity ?? 0);\n" +
+    "        const isFull = capCount > 0 && membersCount >= capCount;\n" +
+    "        const capTag = document.createElement(\"span\");\n" +
+    "        capTag.className = \"tag \" + (isFull ? \"full\" : \"open\");\n" +
+    "        capTag.textContent = capCount > 0 ? (membersCount + \"/\" + capCount + \" seats\") : (membersCount + \" members\");\n" +
+    "        tags.appendChild(subjTag);\n" +
+    "        tags.appendChild(capTag);\n" +
+    "        info.appendChild(title);\n" +
+    "        info.appendChild(tags);\n" +
+    "        const actions = document.createElement(\"div\");\n" +
+    "        actions.className = \"btn-row\";\n" +
+    "        actions.style.marginTop = \"0\";\n" +
+    "        const selectBtn = document.createElement(\"button\");\n" +
+    "        selectBtn.type = \"button\";\n" +
+    "        selectBtn.className = \"btn-secondary btn-sm\";\n" +
+    "        selectBtn.textContent = \"Select ID\";\n" +
+    "        selectBtn.onclick = () => { const idInput = document.getElementById(\"membershipGroupId\"); if (idInput) idInput.value = String(g.id); };\n" +
+    "        const joinBtn = document.createElement(\"button\");\n" +
+    "        joinBtn.type = \"button\";\n" +
+    "        joinBtn.className = \"btn-primary btn-sm\";\n" +
+    "        joinBtn.textContent = \"Join\";\n" +
+    "        joinBtn.disabled = isFull;\n" +
+    "        joinBtn.onclick = async () => { const idInput = document.getElementById(\"membershipGroupId\"); if (idInput) idInput.value = String(g.id); await joinSelectedGroup(); };\n" +
+    "        actions.appendChild(selectBtn);\n" +
+    "        actions.appendChild(joinBtn);\n" +
+    "        item.appendChild(info);\n" +
+    "        item.appendChild(actions);\n" +
+    "        container.appendChild(item);\n" +
+    "      }\n" +
+    "    }\n" +
+    "    async function loadGroups() {\n" +
+    "      const container = document.getElementById(\"groupsCards\");\n" +
+    "      if (container) {\n" +
+    "        container.textContent = \"\";\n" +
+    "        const loading = document.createElement(\"div\");\n" +
+    "        loading.className = \"state-box\";\n" +
+    "        loading.textContent = \"Loading groups...\";\n" +
+    "        container.appendChild(loading);\n" +
+    "      }\n" +
+    "      try {\n" +
+    "        const res = await fetch(\"/api/groups\");\n" +
+    "        const data = await res.json();\n" +
+    "        document.getElementById(\"groupsOutput\").textContent = JSON.stringify(data, null, 2);\n" +
+    "        const list = Array.isArray(data) ? data : (Array.isArray(data.groups) ? data.groups : []);\n" +
+    "        renderGroupCards(list);\n" +
+    "      } catch { setBanner(\"groupMsg\", \"Failed to load study groups.\", \"error\"); }\n" +
+    "    }\n" +
+    "    async function createNewGroup() {\n" +
+    "      setBanner(\"groupMsg\", \"Creating group...\", \"info\");\n" +
+    "      const title = document.getElementById(\"groupTitle\").value;\n" +
+    "      const subject = document.getElementById(\"groupSubject\").value;\n" +
+    "      const max_capacity = Number(document.getElementById(\"groupCapacity\").value);\n" +
+    "      try {\n" +
+    "        const res = await fetch(\"/api/groups\", { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: JSON.stringify({ title, subject, max_capacity }) });\n" +
+    "        const data = await res.json();\n" +
+    "        if (res.ok) { setBanner(\"groupMsg\", \"Created group #\" + data.group.id + \".\", \"success\"); }\n" +
+    "        else { setBanner(\"groupMsg\", data.error || \"Could not create group.\", \"error\"); }\n" +
+    "        await loadGroups();\n" +
+    "      } catch { setBanner(\"groupMsg\", \"Network error while creating group.\", \"error\"); }\n" +
+    "    }\n" +
+    "    async function joinSelectedGroup() {\n" +
+    "      const groupId = Number(document.getElementById(\"membershipGroupId\").value);\n" +
+    "      if (!groupId) { setBanner(\"groupMsg\", \"Enter or select a valid Group ID first.\", \"error\"); return; }\n" +
+    "      setBanner(\"groupMsg\", \"Joining group #\" + groupId + \"...\", \"info\");\n" +
+    "      try {\n" +
+    "        const res = await fetch(\"/api/groups/\" + groupId + \"/join\", { method: \"POST\" });\n" +
+    "        const data = await res.json();\n" +
+    "        setBanner(\"groupMsg\", res.ok ? (data.message || \"Joined group.\") : (data.error || \"Could not join group.\"), res.ok ? \"success\" : \"error\");\n" +
+    "        await loadGroups();\n" +
+    "      } catch { setBanner(\"groupMsg\", \"Network error while joining group.\", \"error\"); }\n" +
+    "    }\n" +
+    "    async function leaveSelectedGroup() {\n" +
+    "      const groupId = Number(document.getElementById(\"membershipGroupId\").value);\n" +
+    "      if (!groupId) { setBanner(\"groupMsg\", \"Enter or select a valid Group ID first.\", \"error\"); return; }\n" +
+    "      setBanner(\"groupMsg\", \"Leaving group #\" + groupId + \"...\", \"info\");\n" +
+    "      try {\n" +
+    "        const res = await fetch(\"/api/groups/\" + groupId + \"/leave\", { method: \"POST\" });\n" +
+    "        const data = await res.json();\n" +
+    "        setBanner(\"groupMsg\", res.ok ? (data.message || \"Left group.\") : (data.error || \"Could not leave group.\"), res.ok ? \"success\" : \"error\");\n" +
+    "        await loadGroups();\n" +
+    "      } catch { setBanner(\"groupMsg\", \"Network error while leaving group.\", \"error\"); }\n" +
+    "    }\n" +
+    "    async function getRecommendations() {\n" +
+    "      const formattedEl = document.getElementById(\"aiFormatted\");\n" +
+    "      if (formattedEl) formattedEl.textContent = \"Generating recommendations...\";\n" +
+    "      const preferences = document.getElementById(\"prefsInput\").value || \"Web Programming\";\n" +
+    "      try {\n" +
+    "        const res = await fetch(\"/api/recommendations\", { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: JSON.stringify({ preferences }) });\n" +
+    "        const data = await res.json();\n" +
+    "        document.getElementById(\"aiOutput\").textContent = JSON.stringify(data, null, 2);\n" +
+    "        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || data?.recommendation || data?.message || \"Recommendations received.\";\n" +
+    "        if (formattedEl) formattedEl.textContent = String(text);\n" +
+    "      } catch { if (formattedEl) formattedEl.textContent = \"Could not load recommendations right now.\"; }\n" +
+    "    }\n" +
+    "    loadGroups();\n" +
+    "  </script>\n" +
+    "</body>\n" +
+    "</html>";
+}
+
+// Main HTTP server / Основен HTTP сървър
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url || '/', config.publicBaseUrl);
   const cookies = parseCookies(req);
