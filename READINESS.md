@@ -1,49 +1,74 @@
-# Readiness Report / Готовност за разполагане
+# Readiness report: Study Group Manager (`webdev-121326039`)
 
-## Live URL
-- Live URL: `https://webdev-121326039.onrender.com` (Docker deployment on Render free tier, Frankfurt region).
-- How I checked: Verified `GET /health` returns HTTP `200`, served HTML page loads over `https://`, tested Google OAuth sign-in, and confirmed created records persist in Neon PostgreSQL across a manual redeploy.
+## 1. Live URL and how to verify it
+- Live URL: `https://webdev-121326039.onrender.com`
+- Verify `GET /health` returns HTTP `200` with `{"status":"ok","db":"ok"}` and open the app over `https://` without browser TLS warnings.
+- Sign in (via local credentials or Google OAuth) and verify study groups list, create/join actions, and AI recommendations.
+- How I checked: Checked `GET https://webdev-121326039.onrender.com/health` (`HTTP/1.1 200 OK`), opened the live URL over HTTPS, and ran `node checks/ex4.mjs https://webdev-121326039.onrender.com` (`34/34 checks passed`).
 
-## Environment variables
-- Required at startup: `DATABASE_URL` (Neon PostgreSQL connection string), `SESSION_SECRET` (signing key for `sgm_session` cookie).
-- Optional / deployment variables: `PORT` (default `3000`, Render injects `10000`), `PUBLIC_BASE_URL` (`https://webdev-121326039.onrender.com`), `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GEMINI_API_KEY`, `MODEL_NAME` (`gemini-1.5-flash`), `MCP_TOKEN`.
-- How I checked: Verified `.env.example` holds non-secret placeholders, `.env` is ignored/not committed, and Render environment variables are configured for live execution.
+## 2. Environment variables
 
-## Failure behavior (what happens when things fail)
-- Missing `DATABASE_URL` or `SESSION_SECRET`: startup validation in `config.js` fails fast with non-zero exit code so broken instances do not serve silently.
-- Database unreachable: `GET /health` returns `503` when `SELECT 1` fails; group/auth endpoints return controlled error responses rather than crashing the process.
-- Full group join or unauthenticated write: `joinGroup` rejects over-capacity joins with `409` (`"This group is full"`) and unauthenticated mutations return `401`.
-- How I checked: Ran unit/acceptance tests (`npm test` / `npm run coverage`) and verified error status codes and live behavior on Render.
+| Variable | Purpose | Where value comes from | Secret? |
+|---|---|---|---|
+| `PORT` | Port HTTP server listens on | Render runtime or local `.env` / default `3000` | No |
+| `DATABASE_URL` | PostgreSQL connection string for Neon database | Neon project connection string | Yes |
+| `SESSION_SECRET` | Signs and verifies session cookies (`sgm_session`) | Generated via `openssl rand -hex 32` | Yes |
+| `PUBLIC_BASE_URL` | Public base URL for callbacks and links | Render service URL (`https://webdev-121326039.onrender.com`) | No |
+| `GOOGLE_CLIENT_ID` | Google OAuth 2.0 client identifier | Google Cloud Console OAuth credentials | Yes |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth 2.0 client secret | Google Cloud Console OAuth credentials | Yes |
+| `GEMINI_API_KEY` | API key for AI study group recommendations (optional fallback) | Model provider console / environment | Yes |
 
-## Screen states (four states)
-- Loading: form and fetch actions show active status while requests are in flight.
-- Empty: empty group lists display guidance to browse or create a study group instead of a blank area.
-- Error: validation, auth, and conflict errors render readable messages rather than raw stack traces.
-- Success: creating, joining, or leaving a group updates the displayed state immediately and persists in PostgreSQL.
-- How I checked: Exercised flows in browser on `https://webdev-121326039.onrender.com` and reviewed `docs/UI.md`.
+- Startup checks stop early with a clear message when required variables (`DATABASE_URL`, `SESSION_SECRET`) are missing, while keeping optional fallback behavior when model keys are absent.
+- How I checked: Verified `.env.example` lists variables without secrets, `.env` is untracked/gitignored, and startup validation fails cleanly on missing required variables.
 
-## Request waterfall
-- Initial page load (`GET /`) returns HTML; client/form actions call `/auth/*` and `/api/groups` or `/api/recommendations`, which query Neon PostgreSQL (`study_groups`, `group_members`, `users`) or call Gemini API with a 5s abort timeout.
-- How I checked: Inspected route handlers in `server.js`, service calls in `services/groupService.js` and `services/aiService.js`, and browser network activity.
+## 3. What happens when things fail
+- **Database unavailable**: `/health` returns HTTP `503` (`{"status":"error","db":"down"}`) and routes return clean error responses without crashing the process or leaking stack traces.
+  - How I checked: Tested unreachable `DATABASE_URL` behavior and verified `503` on `/health` and clean error handling.
+- **Bad deploy and rollback**: CI checks run on commits (`After CI Checks Pass` in Render) and Render Events supports rolling back to a previous release.
+  - How I checked: Checked GitHub Actions workflow status and Render deployment/rollback controls.
+- **Invalid or unauthenticated write requests**: Malformed JSON returns `400` with a single message (never a stack trace) and unauthenticated writes return `401`/`403`.
+  - How I checked: Sent malformed JSON and unauthenticated write requests via `curl` and verified status codes without stack traces.
 
-## Security checks
-- Session cookies (`sgm_session`) are signed with `SESSION_SECRET` and marked `HttpOnly`; local passwords use `scrypt` hashing; OAuth callback is registered on `https://webdev-121326039.onrender.com/auth/google/callback`.
-- Note: An earlier connection string was pasted during setup chat—rotate the Neon database password in the Neon console as a precaution.
-- How I checked: Reviewed `server.js` auth/session handling, Google Cloud Console OAuth settings, and live Google login on Render.
+## 4. Four states of one screen
+- **Loading**: Shows loading indicator (`loading.jfif`) while study groups and recommendations are fetched.
+- **Content (`Success`)**: Shows active study groups, capacity counts, actions, and confirmation state (`success.jfif`).
+- **Empty**: Shows empty-state prompt and action button when no groups match or exist (`empty.jfif`).
+- **Error**: Shows clear error banner/message when a request fails or group capacity is full (`error.jfif`).
+- How I checked: Inspected UI states and added `loading.jfif`, `success.jfif`, `empty.jfif`, and `error.jfif` under `docs/screenshots/`.
 
-## Known gaps (ranked by risk)
-1. **High — Secret rotation after chat paste:** The Neon `DATABASE_URL` string appeared earlier in chat; rotating the DB password in Neon closes any exposure risk.
-2. **Medium — Free-tier cold starts & test-mode OAuth:** Render free tier sleeps after inactivity (causing cold-start delay) and Google OAuth consent is restricted to listed test users until published.
-3. **Low — AI service function coverage & UI screenshots:** `services/aiService.js` includes an un-triggered `setTimeout` abort callback in unit tests, and visual screenshot files in `docs/screenshots/` are still placeholders.
-- How I checked: Audited code coverage output, Render free-instance behavior, and Google Auth Platform consent status.
+## 5. Request waterfall
+- Initial page load fetches static assets/HTML and bootstrap state, followed by API requests (`/api/groups`, `/api/auth/me`, recommendations/actions) as client scripts run.
+- Disabling cache and throttling network in browser DevTools shows request ordering, sequential dependencies, and total finish time.
+- How I checked: Inspected the browser DevTools Network tab with cache disabled and network throttling enabled.
 
-## Model feature in production
-- What data leaves the app: Only the user's study-group preference text prompt is sent in the POST body to `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent` with header `x-goog-api-key`; user passwords and session cookies never leave to the model.
-- Cost per call: Priced per token by Gemini API (`gemini-1.5-flash` input/output tokens; e.g. fractions of a cent per typical short recommendation prompt—check current Gemini API pricing page on November 25, 2026 for exact rate).
-- When provider is down / rate-limited / timed out: `services/aiService.js` enforces a 5000ms `AbortController` timeout and catches missing API key, non-OK HTTP responses (`429`/`5xx`), or network errors, returning `{ fallback: true, message: "AI recommendations are currently unavailable, please browse groups manually" }`.
-- How I checked: Tested `services/aiService.js` with fake fetch clients covering success, non-OK status, and error fallback paths (`npm run coverage`).
+## 6. Security basics checked
+- **Secrets scan**: Checked tracked files and full Git history (`git log -p`) for secrets, passwords, tokens, or API keys; no real secrets are present in repository history.
+  - How I checked: Ran regex secret scan across `git log -p` and verified `.env` is ignored.
+- **HTTPS**: Live application is served over `https://webdev-121326039.onrender.com` with TLS enabled.
+  - How I checked: Opened `https://webdev-121326039.onrender.com` in browser and checked `/health` over HTTPS.
+- **Authentication & ownership on write endpoints**: Write endpoints require authentication (`401`/`403` without login) and enforce ownership/membership checks before mutating or deleting data.
+  - How I checked: Tested write endpoints without authentication and across user accounts.
+- **Session cookie flags**: `sgm_session` uses signed session values with `HttpOnly`, `SameSite`, and `Secure` (in HTTPS/production) flags.
+  - How I checked: Verified session cookie flags and `Set-Cookie` behavior.
 
-## MCP server in production
-- Who may call tools: Invoked locally/via stdio (`npm run mcp` -> `node mcp-server/server.js`) by an authorized MCP client/agent process; optional `MCP_TOKEN` env var can gate token-authenticated callers where configured.
-- Permissions granted: Exposes MCP tools/resources for the workspace without granting direct shell execution or exposing raw `.env` secrets.
-- How I checked: Checked `package.json` `"mcp"` script and `mcp-server/check.mjs` conformance setup.
+## 7. Known gaps, ranked by risk
+1. **Free-tier cold starts and database idle suspend**: Render free web services can sleep after inactivity and Neon compute can suspend when idle, slowing initial requests after pause.
+   - Next step: Keep health checks clear and document expected cold-start delay.
+   - How I checked: Compared initial cold request time with warm requests on `https://webdev-121326039.onrender.com`.
+2. **Brute-force rate limiting on authentication routes**: Login routes do not yet enforce strict rate limiting or temporary lockouts after repeated failed attempts.
+   - Next step: Add rate-limiting middleware on `/api/auth/*` routes and add tests.
+   - How I checked: Reviewed authentication route handlers for rate-limit enforcement.
+3. **Granular ownership/role edge-case tests**: Additional automated tests for cross-user `403` checks across secondary mutation endpoints would harden regression coverage.
+   - Next step: Add explicit non-owner/non-member test cases for all write routes.
+   - How I checked: Reviewed write route authorization checks across controllers/services.
+
+## 8. Model feature
+- **What leaves the app**: Only non-sensitive study-group context/preferences needed for recommendations (no passwords, session secrets, or unnecessary personal data).
+- **Cost per request**: Small prompt/response token count; based on Gemini API list pricing (checked November 2026), one call costs well under `$0.001`.
+- **When the provider is down**: `services/aiService.js` falls back cleanly to local/rule-based recommendations without breaking the page or group management.
+- How I checked: Tested AI service with key set, unset, and fallback path via unit tests (`npm run coverage`).
+
+## 9. MCP
+- **Who may call & what it grants**: Only the local developer/client process running `mcp-server/server.js` over stdio may invoke its tools, acting as that local user session and granting read-only access to local course/lecture data (not user accounts, session secrets, or live database mutations).
+- **Production stance**: Not exposed on the public production URL (`https://webdev-121326039.onrender.com`), keeping internal tooling isolated.
+- How I checked: Inspected `mcp-server/server.js` and ran `node mcp-server/check.mjs -- npm run --silent mcp`.

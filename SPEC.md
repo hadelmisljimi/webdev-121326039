@@ -54,6 +54,12 @@ One request, `POST /api/groups`, through every layer:
 
 Where this codebase does not match its own layering: Simple validation logic is occasionally handled directly inside controllers rather than a separate validation middleware layer.
 
+| Screen | Rendered where | Why this choice | While data is in flight |
+|---|---|---|---|
+| Auth / Login view | In browser | Renders immediately and checks session state via API without reload | Login/register form is visible while session check resolves |
+| Study Groups Dashboard | In browser | Updates group list, capacity badges, actions, and recommendations dynamically | Loading state (loading.jfif) appears while groups load |
+| Empty / Error / Fallback | In browser | Responds dynamically to empty lists, full-group conflicts, errors, or AI fallback | Empty prompt (empty.jfif), error alert (error.jfif), or fallback notice shown |
+
 ## Acceptance criteria
 - [AC-1] A member who signs up for a study group with no free places sees "This group is full", and no new row appears in `group_members`.
 - [AC-2] A student who submits valid registration details sees a success message and a new user record appears in the `users` table.
