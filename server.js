@@ -228,32 +228,37 @@ function escapeHtml(val) {
 
 function renderHomePage(user) {
   const css = "\n" +
-    "    :root { --bg: #f3f6fb; --surface: #ffffff; --surface-alt: #f8fafc; --text: #0f172a; --muted: #475569; --subtle: #64748b; --border: #e2e8f0; --border-strong: #cbd5e1; --primary: #2563eb; --primary-hover: #1d4ed8; --primary-soft: #eff6ff; --success-bg: #ecfdf5; --success-text: #065f46; --success-border: #a7f3d0; --error-bg: #fef2f2; --error-text: #991b1b; --error-border: #fecaca; --warn-bg: #fffbeb; --warn-text: #92400e; --radius: 14px; --radius-sm: 10px; --shadow: 0 12px 28px -14px rgba(15, 23, 42, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.05); --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05); }\n" +
+    "    :root { --bg: #f3f6fb; --surface: #ffffff; --surface-alt: #f8fafc; --text: #0f172a; --muted: #475569; --subtle: #64748b; --border: #e2e8f0; --border-strong: #cbd5e1; --primary: #2563eb; --primary-hover: #1d4ed8; --primary-soft: #eff6ff; --success-bg: #ecfdf5; --success-text: #065f46; --success-border: #a7f3d0; --error-bg: #fef2f2; --error-text: #991b1b; --error-border: #fecaca; --warn-bg: #fffbeb; --warn-text: #92400e; --radius: 14px; --radius-sm: 10px; --shadow: 0 14px 32px -14px rgba(15, 23, 42, 0.16), 0 4px 10px -2px rgba(15, 23, 42, 0.06); --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05); }\n" +
     "    * { box-sizing: border-box; }\n" +
     "    html { scroll-behavior: smooth; }\n" +
-    "    body { margin: 0; font-family: \"Inter\", system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif; background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 240px, var(--bg) 100%); color: var(--text); line-height: 1.5; min-height: 100vh; }\n" +
+    "    body { margin: 0; font-family: \"Inter\", system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif; background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 260px, var(--bg) 100%); color: var(--text); line-height: 1.5; min-height: 100vh; }\n" +
     "    :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }\n" +
-    "    .topbar { position: sticky; top: 0; z-index: 30; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }\n" +
-    "    .topbar-inner { max-width: 1160px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }\n" +
+    "    .topbar { position: sticky; top: 0; z-index: 30; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }\n" +
+    "    .topbar-inner { max-width: 1160px; margin: 0 auto; padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }\n" +
     "    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }\n" +
     "    .brand-mark { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #4338ca); color: #ffffff; font-weight: 700; font-size: 0.92rem; display: grid; place-items: center; box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25); flex-shrink: 0; }\n" +
     "    .brand-title { font-weight: 700; font-size: 1.02rem; letter-spacing: -0.015em; display: block; }\n" +
     "    .brand-sub { font-size: 0.76rem; color: var(--subtle); display: block; }\n" +
-    "    .nav-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; position: relative; }\n" +
+    "    .nav-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; position: relative; }\n" +
     "    .nav-link { text-decoration: none; color: var(--muted); font-size: 0.86rem; font-weight: 500; padding: 7px 12px; border-radius: 8px; white-space: nowrap; }\n" +
     "    .nav-link:hover { background: var(--surface-alt); color: var(--text); }\n" +
     "    .session-pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text); white-space: nowrap; }\n" +
     "    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; flex-shrink: 0; }\n" +
     "    .status-dot.active { background: #10b981; }\n" +
-    "    .account-icon-btn { width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }\n" +
-    "    .account-icon-btn:hover { background: var(--surface-alt); border-color: #94a3b8; }\n" +
-    "    .account-popover { display: none; position: absolute; right: 0; top: 46px; width: 320px; max-width: calc(100vw - 32px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; z-index: 50; }\n" +
+    "    .account-trigger { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; background: transparent; border: none; padding: 2px 6px; cursor: pointer; }\n" +
+    "    .account-badge { width: 34px; height: 34px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.86rem; transition: transform 0.12s ease, box-shadow 0.15s ease; }\n" +
+    "    .account-badge.guest { background: #2563eb; color: #ffffff; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.28); }\n" +
+    "    .account-badge.auth { background: linear-gradient(135deg, #0f766e, #4f46e5); color: #ffffff; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.24); }\n" +
+    "    .account-trigger:hover .account-badge { transform: translateY(-1px); }\n" +
+    "    .account-caption { font-size: 0.68rem; font-weight: 600; color: var(--muted); line-height: 1.1; white-space: nowrap; }\n" +
+    "    .account-popover { display: none; position: absolute; right: 0; top: 54px; width: 325px; max-width: calc(100vw - 32px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; z-index: 50; }\n" +
     "    .account-popover.open { display: block; }\n" +
     "    .popover-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }\n" +
     "    .popover-title { font-weight: 700; font-size: 0.94rem; color: var(--text); }\n" +
-    "    .popover-close { background: transparent; border: none; color: var(--subtle); font-size: 1.05rem; padding: 2px 6px; cursor: pointer; }\n" +
+    "    .popover-close { background: transparent; border: none; color: var(--subtle); font-size: 1.1rem; padding: 2px 6px; cursor: pointer; }\n" +
     "    .popover-close:hover { color: var(--text); }\n" +
     "    .container { max-width: 1160px; margin: 0 auto; padding: 28px 24px 64px; }\n" +
+    "    section[id] { scroll-margin-top: 84px; }\n" +
     "    .page-header { margin-bottom: 22px; }\n" +
     "    .page-header h1 { margin: 0 0 6px; font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -0.025em; color: var(--text); }\n" +
     "    .page-header p { margin: 0; color: var(--muted); font-size: 0.95rem; }\n" +
@@ -264,13 +269,17 @@ function renderHomePage(user) {
     "    .metric-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }\n" +
     "    .workspace-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 22px; align-items: start; }\n" +
     "    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); }\n" +
-    "    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 16px; }\n" +
+    "    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }\n" +
+    "    .card-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }\n" +
     "    .card-title { margin: 0; font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; }\n" +
     "    .card-desc { margin: 3px 0 0; font-size: 0.85rem; color: var(--muted); }\n" +
     "    .section-label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }\n" +
     "    .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }\n" +
-    "    .form-grid-auth { display: grid; grid-template-columns: 1fr; gap: 9px; }\n" +
+    "    .form-grid-auth, .form-grid-stack { display: grid; grid-template-columns: 1fr; gap: 9px; }\n" +
     "    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }\n" +
+    "    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }\n" +
+    "    .chip-btn { padding: 4px 10px; border-radius: 999px; font-size: 0.76rem; font-weight: 500; background: var(--surface-alt); color: var(--muted); border: 1px solid var(--border); cursor: pointer; }\n" +
+    "    .chip-btn:hover { background: var(--primary-soft); color: var(--primary); border-color: #bfdbfe; }\n" +
     "    input { width: 100%; padding: 9px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font-family: inherit; font-size: 0.88rem; }\n" +
     "    input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14); outline: none; }\n" +
     "    button, .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 14px; border-radius: var(--radius-sm); border: 1px solid transparent; font-family: inherit; font-size: 0.86rem; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: none; }\n" +
@@ -290,6 +299,7 @@ function renderHomePage(user) {
     "    .banner.error { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border); }\n" +
     "    .group-list { display: grid; gap: 10px; margin-top: 14px; }\n" +
     "    .group-card { border: 1px solid var(--border); background: var(--surface-alt); border-radius: var(--radius-sm); padding: 13px 15px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }\n" +
+    "    .group-card:hover { border-color: var(--border-strong); background: #ffffff; }\n" +
     "    .group-name { font-weight: 600; font-size: 0.95rem; color: var(--text); }\n" +
     "    .group-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; align-items: center; }\n" +
     "    .tag { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; background: #e2e8f0; color: #334155; }\n" +
@@ -302,16 +312,30 @@ function renderHomePage(user) {
     "    .ai-result { margin-top: 14px; padding: 13px 14px; border-radius: var(--radius-sm); background: var(--surface-alt); border: 1px solid var(--border); font-size: 0.88rem; color: var(--text); white-space: pre-wrap; }\n" +
     "    pre { background: #0f172a; color: #e2e8f0; padding: 12px 14px; border-radius: var(--radius-sm); overflow-x: auto; font-size: 0.78rem; margin-top: 8px; }\n" +
     "    details summary { cursor: pointer; font-size: 0.8rem; color: var(--subtle); margin-top: 12px; user-select: none; }\n" +
+    "    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.48); backdrop-filter: blur(3px); z-index: 60; align-items: center; justify-content: center; padding: 18px; }\n" +
+    "    .modal-backdrop.open { display: flex; }\n" +
+    "    .modal-panel { width: 100%; max-width: 560px; max-height: 88vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); }\n" +
     "    @media (max-width: 960px) { .workspace-grid { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }\n" +
-    "    @media (max-width: 640px) { .metrics-grid { grid-template-columns: 1fr; } .container { padding: 20px 16px 48px; } .card { padding: 18px; } }\n" +
+    "    @media (max-width: 640px) { .metrics-grid { grid-template-columns: 1fr; } .container { padding: 22px 16px 48px; } .card { padding: 18px; } }\n" +
     "";
 
   const safeEmail = escapeHtml(user?.email || "");
   const safeName = escapeHtml(user?.name || "Student");
   const isAuth = Boolean(user);
+  const initialChar = escapeHtml(((user?.name || user?.email || "U").trim().charAt(0) || "U").toUpperCase());
 
   const sessionPillText = isAuth ? "Signed in: " + safeEmail : "Guest session";
   const dotClass = isAuth ? "status-dot active" : "status-dot";
+  const accountCaption = isAuth ? "Account" : "Sign in / Create";
+
+  const accountBadgeHtml = isAuth
+    ? "<span class=\"account-badge auth\">" + initialChar + "</span>"
+    : "<span class=\"account-badge guest\">" +
+        "<svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">" +
+          "<path d=\"M20 21a8 8 0 0 0-16 0\"></path>" +
+          "<circle cx=\"12\" cy=\"7\" r=\"4\"></circle>" +
+        "</svg>" +
+      "</span>";
 
   const accountPopoverBody = user
     ? "<div class=\"profile-box\">" +
@@ -363,15 +387,13 @@ function renderHomePage(user) {
     "          <span class=\"" + dotClass + "\"></span>\n" +
     "          <span>" + sessionPillText + "</span>\n" +
     "        </span>\n" +
-    "        <button id=\"accountIconBtn\" class=\"account-icon-btn\" type=\"button\" aria-label=\"Account menu\" aria-expanded=\"false\" onclick=\"toggleAccountPopover(event)\">\n" +
-    "          <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\n" +
-    "            <path d=\"M20 21a8 8 0 0 0-16 0\"></path>\n" +
-    "            <circle cx=\"12\" cy=\"7\" r=\"4\"></circle>\n" +
-    "          </svg>\n" +
+    "        <button id=\"accountIconBtn\" class=\"account-trigger\" type=\"button\" aria-label=\"Account menu\" aria-expanded=\"false\" onclick=\"toggleAccountPopover(event)\">\n" +
+    "          " + accountBadgeHtml + "\n" +
+    "          <span class=\"account-caption\">" + accountCaption + "</span>\n" +
     "        </button>\n" +
     "        <div id=\"accountPopover\" class=\"account-popover\" role=\"dialog\" aria-label=\"Account options\">\n" +
     "          <div class=\"popover-head\">\n" +
-    "            <span class=\"popover-title\">" + (isAuth ? "Account details" : "Sign in or register") + "</span>\n" +
+    "            <span class=\"popover-title\">" + (isAuth ? "Account details" : "Sign in or create account") + "</span>\n" +
     "            <button class=\"popover-close\" type=\"button\" aria-label=\"Close account menu\" onclick=\"closeAccountPopover()\">&times;</button>\n" +
     "          </div>\n" +
     "          " + accountPopoverBody + "\n" +
@@ -404,7 +426,10 @@ function renderHomePage(user) {
     "            <h2 class=\"card-title\">Study Groups</h2>\n" +
     "            <p class=\"card-desc\">Create a group, join or leave by ID, and inspect live cohorts.</p>\n" +
     "          </div>\n" +
-    "          <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"loadGroups()\">Refresh</button>\n" +
+    "          <div class=\"card-actions\">\n" +
+    "            <button class=\"btn-soft btn-sm\" type=\"button\" onclick=\"openModal('groupModal')\">Group Window</button>\n" +
+    "            <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"loadGroups()\">Refresh</button>\n" +
+    "          </div>\n" +
     "        </div>\n" +
     "        <span class=\"section-label\">New Study Group</span>\n" +
     "        <div class=\"form-grid\">\n" +
@@ -439,8 +464,14 @@ function renderHomePage(user) {
     "            <h2 class=\"card-title\">AI Study Recommendations</h2>\n" +
     "            <p class=\"card-desc\">Enter your topic, schedule, or level to get study suggestions.</p>\n" +
     "          </div>\n" +
+    "          <button class=\"btn-soft btn-sm\" type=\"button\" onclick=\"openModal('aiModal')\">AI Window</button>\n" +
     "        </div>\n" +
     "        <input id=\"prefsInput\" type=\"text\" placeholder=\"Topic, schedule, level (e.g. Web Programming)\" aria-label=\"Study preferences\" />\n" +
+    "        <div class=\"chip-row\">\n" +
+    "          <button class=\"chip-btn\" type=\"button\" onclick=\"applyPreset('Web Programming, evenings, intermediate')\">Web Programming</button>\n" +
+    "          <button class=\"chip-btn\" type=\"button\" onclick=\"applyPreset('Databases & SQL, weekend lab, beginner')\">Databases &amp; SQL</button>\n" +
+    "          <button class=\"chip-btn\" type=\"button\" onclick=\"applyPreset('Cloud & Distributed Systems, exam prep')\">Cloud Systems</button>\n" +
+    "        </div>\n" +
     "        <div class=\"btn-row\">\n" +
     "          <button class=\"btn-primary\" type=\"button\" onclick=\"getRecommendations()\">Get Recommendations</button>\n" +
     "        </div>\n" +
@@ -452,6 +483,47 @@ function renderHomePage(user) {
     "      </section>\n" +
     "    </div>\n" +
     "  </main>\n" +
+    "  <div id=\"groupModal\" class=\"modal-backdrop\" role=\"dialog\" aria-modal=\"true\" aria-label=\"Study Group Studio\">\n" +
+    "    <div class=\"modal-panel\">\n" +
+    "      <div class=\"popover-head\">\n" +
+    "        <span class=\"popover-title\">Study Group Studio</span>\n" +
+    "        <button class=\"popover-close\" type=\"button\" aria-label=\"Close window\" onclick=\"closeModal('groupModal')\">&times;</button>\n" +
+    "      </div>\n" +
+    "      <p class=\"card-desc\" style=\"margin-bottom:14px;\">Create a new study cohort or manage membership quickly in a focused window.</p>\n" +
+    "      <span class=\"section-label\">Create Cohort</span>\n" +
+    "      <div class=\"form-grid-stack\">\n" +
+    "        <input id=\"modalGroupTitle\" type=\"text\" placeholder=\"Group title (e.g. Algorithms Prep)\" aria-label=\"Modal group title\" />\n" +
+    "        <input id=\"modalGroupSubject\" type=\"text\" placeholder=\"Subject (e.g. Data Structures)\" aria-label=\"Modal group subject\" />\n" +
+    "        <input id=\"modalGroupCapacity\" type=\"number\" min=\"1\" placeholder=\"Max capacity (e.g. 6)\" aria-label=\"Modal group capacity\" />\n" +
+    "      </div>\n" +
+    "      <div class=\"btn-row\">\n" +
+    "        <button class=\"btn-primary btn-sm\" type=\"button\" onclick=\"createGroupFromModal()\">Create Cohort</button>\n" +
+    "        <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"loadGroups()\">Refresh List</button>\n" +
+    "      </div>\n" +
+    "      <hr class=\"divider\" />\n" +
+    "      <span class=\"section-label\">Quick Join / Leave</span>\n" +
+    "      <div class=\"btn-row\" style=\"margin-top:0;\">\n" +
+    "        <input id=\"modalGroupId\" type=\"number\" min=\"1\" placeholder=\"Group ID\" aria-label=\"Modal group ID\" style=\"max-width:130px;\" />\n" +
+    "        <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"syncAndRun('join')\">Join</button>\n" +
+    "        <button class=\"btn-secondary btn-sm\" type=\"button\" onclick=\"syncAndRun('leave')\">Leave</button>\n" +
+    "      </div>\n" +
+    "      <p id=\"modalGroupMsg\" class=\"banner\" role=\"status\" aria-live=\"polite\"></p>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div id=\"aiModal\" class=\"modal-backdrop\" role=\"dialog\" aria-modal=\"true\" aria-label=\"AI Study Advisor Window\">\n" +
+    "    <div class=\"modal-panel\">\n" +
+    "      <div class=\"popover-head\">\n" +
+    "        <span class=\"popover-title\">AI Study Advisor</span>\n" +
+    "        <button class=\"popover-close\" type=\"button\" aria-label=\"Close window\" onclick=\"closeModal('aiModal')\">&times;</button>\n" +
+    "      </div>\n" +
+    "      <p class=\"card-desc\" style=\"margin-bottom:12px;\">Generate tailored study suggestions and inspect the structured response.</p>\n" +
+    "      <input id=\"modalPrefsInput\" type=\"text\" placeholder=\"Topic, schedule, level (e.g. Web Programming)\" aria-label=\"Modal study preferences\" />\n" +
+    "      <div class=\"btn-row\">\n" +
+    "        <button class=\"btn-primary btn-sm\" type=\"button\" onclick=\"runAiFromModal()\">Generate Suggestions</button>\n" +
+    "      </div>\n" +
+    "      <div id=\"modalAiResult\" class=\"ai-result\" aria-live=\"polite\">Ready when you are.</div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
     "  <script>\n" +
     "    function toggleAccountPopover(e) {\n" +
     "      if (e) e.stopPropagation();\n" +
@@ -468,12 +540,40 @@ function renderHomePage(user) {
     "      if (pop) pop.classList.remove(\"open\");\n" +
     "      if (btn) btn.setAttribute(\"aria-expanded\", \"false\");\n" +
     "    }\n" +
+    "    function openModal(id) {\n" +
+    "      closeAccountPopover();\n" +
+    "      const el = document.getElementById(id);\n" +
+    "      if (!el) return;\n" +
+    "      if (id === \"aiModal\") {\n" +
+    "        const mainP = document.getElementById(\"prefsInput\");\n" +
+    "        const modP = document.getElementById(\"modalPrefsInput\");\n" +
+    "        if (mainP && modP && !modP.value) modP.value = mainP.value;\n" +
+    "      }\n" +
+    "      el.classList.add(\"open\");\n" +
+    "    }\n" +
+    "    function closeModal(id) {\n" +
+    "      const el = document.getElementById(id);\n" +
+    "      if (el) el.classList.remove(\"open\");\n" +
+    "    }\n" +
+    "    function applyPreset(text) {\n" +
+    "      const p = document.getElementById(\"prefsInput\");\n" +
+    "      if (p) p.value = text;\n" +
+    "      getRecommendations();\n" +
+    "    }\n" +
     "    document.addEventListener(\"click\", (e) => {\n" +
     "      const pop = document.getElementById(\"accountPopover\");\n" +
     "      const btn = document.getElementById(\"accountIconBtn\");\n" +
-    "      if (!pop || !pop.classList.contains(\"open\")) return;\n" +
-    "      if (!pop.contains(e.target) && (!btn || !btn.contains(e.target))) {\n" +
+    "      if (pop && pop.classList.contains(\"open\") && !pop.contains(e.target) && (!btn || !btn.contains(e.target))) {\n" +
     "        closeAccountPopover();\n" +
+    "      }\n" +
+    "      if (e.target.classList && e.target.classList.contains(\"modal-backdrop\")) {\n" +
+    "        e.target.classList.remove(\"open\");\n" +
+    "      }\n" +
+    "    });\n" +
+    "    document.addEventListener(\"keydown\", (e) => {\n" +
+    "      if (e.key === \"Escape\") {\n" +
+    "        closeAccountPopover();\n" +
+    "        document.querySelectorAll(\"(.modal-backdrop.open)\").forEach((m) => m.classList.remove(\"open\"));\n" +
     "      }\n" +
     "    });\n" +
     "    function setBanner(elId, message, type) {\n" +
@@ -591,6 +691,27 @@ function renderHomePage(user) {
     "        await loadGroups();\n" +
     "      } catch { setBanner(\"groupMsg\", \"Network error while creating group.\", \"error\"); }\n" +
     "    }\n" +
+    "    async function createGroupFromModal() {\n" +
+    "      const t = document.getElementById(\"modalGroupTitle\").value;\n" +
+    "      const s = document.getElementById(\"modalGroupSubject\").value;\n" +
+    "      const c = document.getElementById(\"modalGroupCapacity\").value;\n" +
+    "      document.getElementById(\"groupTitle\").value = t;\n" +
+    "      document.getElementById(\"groupSubject\").value = s;\n" +
+    "      document.getElementById(\"groupCapacity\").value = c;\n" +
+    "      setBanner(\"modalGroupMsg\", \"Creating cohort...\", \"info\");\n" +
+    "      await createNewGroup();\n" +
+    "      const msg = document.getElementById(\"groupMsg\").textContent;\n" +
+    "      const isErr = document.getElementById(\"groupMsg\").className.includes(\"error\");\n" +
+    "      setBanner(\"modalGroupMsg\", msg, isErr ? \"error\" : \"success\");\n" +
+    "    }\n" +
+    "    async function syncAndRun(action) {\n" +
+    "      const idVal = document.getElementById(\"modalGroupId\").value;\n" +
+    "      document.getElementById(\"membershipGroupId\").value = idVal;\n" +
+    "      if (action === \"join\") await joinSelectedGroup(); else await leaveSelectedGroup();\n" +
+    "      const msg = document.getElementById(\"groupMsg\").textContent;\n" +
+    "      const isErr = document.getElementById(\"groupMsg\").className.includes(\"error\");\n" +
+    "      setBanner(\"modalGroupMsg\", msg, isErr ? \"error\" : \"success\");\n" +
+    "    }\n" +
     "    async function joinSelectedGroup() {\n" +
     "      const groupId = Number(document.getElementById(\"membershipGroupId\").value);\n" +
     "      if (!groupId) { setBanner(\"groupMsg\", \"Enter or select a valid Group ID first.\", \"error\"); return; }\n" +
@@ -623,7 +744,17 @@ function renderHomePage(user) {
     "        document.getElementById(\"aiOutput\").textContent = JSON.stringify(data, null, 2);\n" +
     "        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || data?.recommendation || data?.message || \"Recommendations received.\";\n" +
     "        if (formattedEl) formattedEl.textContent = String(text);\n" +
-    "      } catch { if (formattedEl) formattedEl.textContent = \"Could not load recommendations right now.\"; }\n" +
+    "        return String(text);\n" +
+    "      } catch { if (formattedEl) formattedEl.textContent = \"Could not load recommendations right now.\"; return \"Could not load recommendations right now.\"; }\n" +
+    "    }\n" +
+    "    async function runAiFromModal() {\n" +
+    "      const mp = document.getElementById(\"modalPrefsInput\");\n" +
+    "      const p = document.getElementById(\"prefsInput\");\n" +
+    "      const out = document.getElementById(\"modalAiResult\");\n" +
+    "      if (mp && p) p.value = mp.value;\n" +
+    "      if (out) out.textContent = \"Generating recommendations...\";\n" +
+    "      const resText = await getRecommendations();\n" +
+    "      if (out) out.textContent = resText;\n" +
     "    }\n" +
     "    loadGroups();\n" +
     "  </script>\n" +
