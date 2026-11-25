@@ -51,4 +51,4 @@
 
 ## Evidence
 
-- Live deployment verified at `https://webdev-121326039.onrender.com` — UI states screenshot: https://raw.githubusercontent.com/hadelmisljimi/webdev-121326039/main/docs/screenshots/ui-states.png
+- Live deployment verified at `https://webdev-121326039.onrender.com` — UI states: ![Loading](./screenshots/loading.jfif), ![Error](./screenshots/error.jfif), ![Empty](./screenshots/empty.jfif), ![Success](./screenshots/success.jfif)
