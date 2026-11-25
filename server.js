@@ -2,7 +2,13 @@ import crypto from 'node:crypto';
 import http from 'node:http';
 import pg from 'pg';
 import { config } from './config.js';
-import { listGroups, getGroupById, createGroup } from './services/groupService.js';
+import {
+  listGroups,
+  getGroupById,
+  createGroup,
+  joinGroup,
+  leaveGroup,
+} from './services/groupService.js';
 import { getStudyRecommendations } from './services/aiService.js';
 
 const { Pool } = pg;
@@ -219,8 +225,9 @@ function renderHomePage(user) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>StudyGroupManager — Учебни групи</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 780px; margin: 36px auto; padding: 0 16px; line-height: 1.5; }
+    body { font-family: system-ui, sans-serif; max-width: 820px; margin: 36px auto; padding: 0 16px; line-height: 1.5; }
     .card { border: 1px solid #d1d5db; border-radius: 8px; padding: 18px; margin-bottom: 16px; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
     input, textarea, button { padding: 8px 12px; margin: 4px 0; }
     .muted { color: #4b5563; font-size: 0.9rem; }
     pre { background: #f3f4f6; padding: 12px; border-radius: 6px; overflow-x: auto; }
@@ -236,13 +243,40 @@ function renderHomePage(user) {
         ? `<p>Signed in as <strong>${user.email}</strong> (${user.name || 'Student'})</p>
            <button onclick="logout()">Logout / Изход</button>`
         : `<p>Not signed in / Не сте влезли в профила си.</p>
-           <a href="/auth/google"><button type="button">Sign in with Google / Вход с Google</button></a>`
+           <div class="row">
+             <a href="/auth/google"><button type="button">Sign in with Google / Вход с Google</button></a>
+           </div>
+           <hr style="margin: 14px 0; border: none; border-top: 1px solid #e5e7eb;" />
+           <div class="row">
+             <input id="authName" type="text" placeholder="Name (register) / Име" />
+             <input id="authEmail" type="email" placeholder="Email / Имейл" />
+             <input id="authPassword" type="password" placeholder="Password (min 6) / Парола" />
+           </div>
+           <div class="row">
+             <button onclick="loginUser()">Login / Вход</button>
+             <button onclick="registerUser()">Register / Регистрация</button>
+           </div>
+           <p id="authMsg" class="muted"></p>`
     }
   </div>
 
   <div class="card">
     <h2>Study Groups / Учебни групи</h2>
-    <button onclick="loadGroups()">Refresh Groups / Обнови групите</button>
+    <div class="row">
+      <button onclick="loadGroups()">Refresh Groups / Обнови групите</button>
+    </div>
+    <div class="row" style="margin-top: 12px;">
+      <input id="groupTitle" type="text" placeholder="Group title / Заглавие" />
+      <input id="groupSubject" type="text" placeholder="Subject / Предмет" />
+      <input id="groupCapacity" type="number" min="1" placeholder="Max capacity / Капацитет" style="width: 170px;" />
+      <button onclick="createNewGroup()">Create Group / Създай група</button>
+    </div>
+    <div class="row" style="margin-top: 8px;">
+      <input id="membershipGroupId" type="number" min="1" placeholder="Group ID / ID на група" style="width: 170px;" />
+      <button onclick="joinSelectedGroup()">Join Group / Включи се</button>
+      <button onclick="leaveSelectedGroup()">Leave Group / Напусни</button>
+    </div>
+    <p id="groupMsg" class="muted"></p>
     <pre id="groupsOutput">Loading... / Зареждане...</pre>
   </div>
 
@@ -254,6 +288,31 @@ function renderHomePage(user) {
   </div>
 
   <script>
+    async function loginUser() {
+      const email = document.getElementById('authEmail').value;
+      const password = document.getElementById('authPassword').value;
+      const res = await fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok) location.reload();
+      else document.getElementById('authMsg').textContent = data.error || 'Login failed';
+    }
+    async function registerUser() {
+      const name = document.getElementById('authName').value;
+      const email = document.getElementById('authEmail').value;
+      const password = document.getElementById('authPassword').value;
+      const res = await fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+      if (res.ok) location.reload();
+      else document.getElementById('authMsg').textContent = data.error || 'Registration failed';
+    }
     async function logout() {
       await fetch('/auth/logout', { method: 'POST' });
       location.reload();
@@ -262,6 +321,35 @@ function renderHomePage(user) {
       const res = await fetch('/api/groups');
       const data = await res.json();
       document.getElementById('groupsOutput').textContent = JSON.stringify(data, null, 2);
+    }
+    async function createNewGroup() {
+      const title = document.getElementById('groupTitle').value;
+      const subject = document.getElementById('groupSubject').value;
+      const max_capacity = Number(document.getElementById('groupCapacity').value);
+      const res = await fetch('/api/groups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, subject, max_capacity })
+      });
+      const data = await res.json();
+      document.getElementById('groupMsg').textContent = res.ok
+        ? 'Created / Създадена: #' + data.group.id
+        : (data.error || 'Error');
+      await loadGroups();
+    }
+    async function joinSelectedGroup() {
+      const groupId = Number(document.getElementById('membershipGroupId').value);
+      const res = await fetch('/api/groups/' + groupId + '/join', { method: 'POST' });
+      const data = await res.json();
+      document.getElementById('groupMsg').textContent = res.ok ? data.message : (data.error || 'Error');
+      await loadGroups();
+    }
+    async function leaveSelectedGroup() {
+      const groupId = Number(document.getElementById('membershipGroupId').value);
+      const res = await fetch('/api/groups/' + groupId + '/leave', { method: 'POST' });
+      const data = await res.json();
+      document.getElementById('groupMsg').textContent = res.ok ? data.message : (data.error || 'Error');
+      await loadGroups();
     }
     async function getRecommendations() {
       const preferences = document.getElementById('prefsInput').value || 'Web Programming';
@@ -351,6 +439,54 @@ const server = http.createServer(async (req, res) => {
         creator: session.user.email || session.user.id,
       });
       return sendJson(res, 201, { group: created });
+    }
+
+    // Join study group (authenticated members only, 409 if full)
+    // Включване в група (само за влезли потребители, 409 при пълен капацитет)
+    if (req.method === 'POST' && /^\/api\/groups\/\d+\/join$/.test(url.pathname)) {
+      if (!session?.user) {
+        return sendJson(res, 401, {
+          error: 'Unauthorized / Неоторизиран достъп',
+        });
+      }
+      const groupId = Number(url.pathname.split('/')[3]);
+      const userId = Number(session.user.id) || 1;
+      try {
+        const updatedGroup = await joinGroup(groupId, userId);
+        return sendJson(res, 200, {
+          message: 'Joined study group / Успешно се включихте в групата',
+          group: updatedGroup,
+        });
+      } catch (err) {
+        if (err.code === 'GROUP_FULL') {
+          return sendJson(res, 409, { error: 'This group is full' });
+        }
+        if (err.code === 'GROUP_NOT_FOUND') {
+          return sendJson(res, 404, { error: 'Group not found / Групата не е намерена' });
+        }
+        throw err;
+      }
+    }
+
+    // Leave study group (authenticated members only)
+    // Напускане на група (само за влезли потребители)
+    if (req.method === 'POST' && /^\/api\/groups\/\d+\/leave$/.test(url.pathname)) {
+      if (!session?.user) {
+        return sendJson(res, 401, {
+          error: 'Unauthorized / Неоторизиран достъп',
+        });
+      }
+      const groupId = Number(url.pathname.split('/')[3]);
+      const userId = Number(session.user.id) || 1;
+      const group = await getGroupById(groupId);
+      if (!group) {
+        return sendJson(res, 404, { error: 'Group not found / Групата не е намерена' });
+      }
+      const updatedGroup = await leaveGroup(groupId, userId);
+      return sendJson(res, 200, {
+        message: 'Left study group / Напуснахте групата',
+        group: updatedGroup,
+      });
     }
 
     // AI study recommendations with fallback / AI препоръки с резервен вариант
