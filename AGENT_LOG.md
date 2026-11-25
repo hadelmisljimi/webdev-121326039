@@ -32,3 +32,4 @@ One entry per agent session, newest at the bottom. Be honest: what went wrong is
 - Checkpoints: Verified no leftover `peer-app`/`review-db` containers, checked `DEFENSE.md` placeholders, and ran `npm test`, `npm run coverage`, and `node checks/ex5.mjs`.
 - Went wrong: Cannot complete peer review or `test(Rn)`/`fix(Rn)` commits for a partner before a partner is assigned, and the Gemini CLI session in the other environment failed with `API_KEY_INVALID`.
 - Changed by hand: Authored `DEFENSE.md` in own words, verified `git status`, and logged sessions in `AGENT_LOG.md` and `USAGE.md`.
+- R1 follow-up (`fix(R1)`): Verified ownership guard logic in `test/groups.test.js` while keeping all `AC-1`..`AC-13` tests intact.
