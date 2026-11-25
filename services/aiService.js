@@ -1,6 +1,6 @@
-export async function getStudyRecommendations(preferences, client = global.fetch) {
+export async function getStudyRecommendations(preferences, client = global.fetch, timeoutMs = 5000) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 5000); // Таймаут от 5 секунди
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs); // Таймаут от 5 секунди
 
   try {
     const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;

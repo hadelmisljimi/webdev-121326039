@@ -130,3 +130,19 @@ test('R1 authorization guard checks owner identity before mutating group', async
   assert.equal(canMutateGroup(sampleGroup, 'user-other'), false);
   assert.equal(canMutateGroup(sampleGroup, 'user-owner'), true);
 });
+
+test('getStudyRecommendations aborts and falls back when timeout expires', async () => {
+process.env.GEMINI_API_KEY = 'test-key';
+let wasAborted = false;
+const slowClient = (_url, opts) =>
+new Promise((_resolve, reject) => {
+  opts.signal.addEventListener('abort', () => {
+    wasAborted = true;
+    reject(new DOMException('Aborted', 'AbortError'));
+  });
+});
+
+const res = await getStudyRecommendations('Cloud Computing', slowClient, 20);
+assert.equal(wasAborted, true);
+assert.equal(res.fallback, true);
+});
