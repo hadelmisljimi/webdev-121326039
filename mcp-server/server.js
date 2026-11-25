@@ -144,6 +144,18 @@ async function handle(msg) {
       return textResult(msg.id, listText, false);
     }
 
+    if (
+      name !== 'list_study_groups' &&
+      name !== 'find_study_group_by_id' &&
+      name !== 'create_study_group'
+    ) {
+      return {
+        jsonrpc: '2.0',
+        id: msg.id,
+        error: { code: -32602, message: `Непознат инструмент: ${name}` },
+      };
+    }
+
     try {
       const groupService = await loadGroupService();
 
@@ -191,12 +203,6 @@ async function handle(msg) {
         true
       );
     }
-
-    return {
-      jsonrpc: '2.0',
-      id: msg.id,
-      error: { code: -32602, message: `Непознат инструмент: ${name}` },
-    };
   }
 
   if (msg.id !== undefined) {
